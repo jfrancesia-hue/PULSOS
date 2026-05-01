@@ -1,6 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { SmtpDispatcher } from './smtp-dispatcher';
+import { WhatsAppDispatcher } from './whatsapp-dispatcher';
+import { PushDispatcher } from './push-dispatcher';
 
 type Channel = 'EMAIL' | 'PUSH' | 'WHATSAPP' | 'IN_APP';
 type Category =
@@ -30,6 +32,8 @@ export class NotificationsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly smtp: SmtpDispatcher,
+    private readonly whatsapp: WhatsAppDispatcher,
+    private readonly push: PushDispatcher,
   ) {}
 
   /**
@@ -71,8 +75,30 @@ export class NotificationsService {
           html: this.renderEmailHtml(input),
         });
         if (!result.ok) throw new Error(result.error ?? 'fallo SMTP');
+      } else if (input.channel === 'WHATSAPP') {
+        const phone = await this.resolvePhone(input.userId);
+        if (!phone) throw new Error('Sin teléfono registrado para WhatsApp.');
+        const url = (input.payload as Record<string, string> | undefined)?.actionUrl;
+        const body = `*${input.title}*\n\n${input.body}${url ? `\n\n${url}` : ''}\n\n— Pulso`;
+        const result = await this.whatsapp.send({ to: phone, body });
+        if (!result.ok) throw new Error(result.error ?? 'fallo WhatsApp');
+      } else if (input.channel === 'PUSH') {
+        const token = await this.resolvePushToken(input.userId);
+        if (!token) {
+          // No es error: simplemente el usuario no tiene mobile registrado.
+          // Marcamos como SENT para no reintentar.
+          this.logger.debug(`Usuario ${input.userId} sin push token; skip`);
+        } else {
+          const result = await this.push.send({
+            to: token,
+            title: input.title,
+            body: input.body,
+            data: input.payload as Record<string, string> | undefined,
+          });
+          if (!result.ok) throw new Error(result.error ?? 'fallo Push');
+        }
       }
-      // IN_APP, PUSH, WHATSAPP: por ahora solo persistencia. Codex puede activar
+      // IN_APP: solo persistencia (la UI lo lee de la tabla Notification).
       // adapters reales en P1 (Expo Push, Twilio).
 
       await this.prisma.client.notification.update({
@@ -112,6 +138,23 @@ export class NotificationsService {
       where: { userId, readAt: null },
       data: { readAt: new Date(), status: 'READ' },
     });
+  }
+
+  /** Teléfono del ciudadano (E.164 idealmente). */
+  private async resolvePhone(userId: string): Promise<string | null> {
+    const profile = await this.prisma.client.citizenProfile.findUnique({
+      where: { userId },
+      select: { telefono: true },
+    });
+    return profile?.telefono ?? null;
+  }
+
+  /**
+   * Expo Push token. Por ahora siempre null hasta que el mobile registre el token
+   * desde Expo (Codex agrega tabla DeviceToken con userId + token + lastSeenAt).
+   */
+  private async resolvePushToken(_userId: string): Promise<string | null> {
+    return null;
   }
 
   private renderEmailText(input: DispatchInput): string {

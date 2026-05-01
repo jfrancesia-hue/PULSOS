@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { ScheduleModule } from '@nestjs/schedule';
 import { APP_GUARD } from '@nestjs/core';
 import { LoggerModule } from 'nestjs-pino';
 
@@ -26,6 +27,7 @@ import { HealthController } from './modules/health/health.controller';
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     LoggerModule.forRoot(loggerConfig),
+    ScheduleModule.forRoot(),
     ThrottlerModule.forRoot([
       { name: 'default', ttl: 60_000, limit: 60 },
       { name: 'auth', ttl: 60_000, limit: 5 },

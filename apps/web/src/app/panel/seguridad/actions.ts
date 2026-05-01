@@ -28,3 +28,11 @@ export async function mfaDisableAction(token: string) {
     body: JSON.stringify({ token }),
   });
 }
+
+export async function revokeSessionAction(id: string) {
+  return apiFetchAuthed(`/auth/sessions/${id}`, { method: 'DELETE' });
+}
+
+export async function revokeAllSessionsAction() {
+  return apiFetchAuthed('/auth/sessions', { method: 'DELETE' });
+}

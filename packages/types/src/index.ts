@@ -5,3 +5,4 @@ export * from './clinical';
 export * from './mica';
 export * from './audit';
 export * from './common';
+export * from './identity-ar';

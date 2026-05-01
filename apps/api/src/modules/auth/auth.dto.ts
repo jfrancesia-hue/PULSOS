@@ -8,6 +8,7 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
+import { IsCuilAr } from '../../common/validators/cuil.validator';
 
 export class SignupDto {
   @ApiProperty({ example: 'persona@pulso.demo' })
@@ -32,6 +33,12 @@ export class SignupDto {
   @IsString()
   @Matches(/^\d{7,9}$/, { message: 'DNI inválido. Solo números, sin puntos ni guiones.' })
   dni!: string;
+
+  @ApiPropertyOptional({ example: '27-32145678-4', description: 'CUIL con dígito verificador válido' })
+  @IsOptional()
+  @IsString()
+  @IsCuilAr()
+  cuil?: string;
 
   @ApiProperty({ example: '1985-04-12' })
   @IsString()

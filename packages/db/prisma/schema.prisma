@@ -428,6 +428,14 @@ enum ConsentScope {
   EMERGENCIA
 }
 
+enum ConsentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  REVOKED
+  EXPIRED
+}
+
 model Consent {
   id              String              @id @default(uuid()) @db.Uuid
   ciudadanoId     String              @db.Uuid
@@ -438,11 +446,14 @@ model Consent {
   institucion     Institution?        @relation("InstitutionConsents", fields: [institucionId], references: [id], onDelete: SetNull)
   scopes          ConsentScope[]
   motivo          String
-  grantedAt       DateTime            @default(now())
+  status          ConsentStatus       @default(PENDING)
+  requestedAt     DateTime            @default(now())
+  grantedAt       DateTime?
   expiresAt       DateTime?
   revokedAt       DateTime?
+  rejectionReason String?
 
-  @@index([ciudadanoId, expiresAt])
+  @@index([ciudadanoId, status, expiresAt])
   @@index([profesionalId])
 }
 

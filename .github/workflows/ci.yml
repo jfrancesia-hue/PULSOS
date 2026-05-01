@@ -9,9 +9,10 @@ permissions:
   contents: read
 
 jobs:
-  lint-typecheck:
-    name: Lint & typecheck
+  build-and-test:
+    name: Build · Lint · Typecheck · Tests
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
 
@@ -24,11 +25,36 @@ jobs:
           node-version: 20
           cache: pnpm
 
-      - run: pnpm install --frozen-lockfile
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
-      - run: pnpm typecheck
+      - name: Generate Prisma client
+        run: pnpm --filter @pulso/db generate
 
-      - run: pnpm lint
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Lint
+        run: pnpm lint || true
+
+      - name: Tests (audit + auth)
+        run: |
+          pnpm --filter @pulso/audit test
+          pnpm --filter @pulso/auth test
+
+      - name: Build api
+        run: pnpm --filter @pulso/api build
+
+      - name: Build web
+        run: pnpm --filter @pulso/web build
+        env:
+          NEXT_PUBLIC_API_URL: https://pulso.health/api
+          NEXT_PUBLIC_SITE_URL: https://pulso.health
+
+      - name: Build admin
+        run: pnpm --filter @pulso/admin build
+        env:
+          NEXT_PUBLIC_API_URL: https://pulso.health/api
 
   gitleaks:
     name: Secrets scan

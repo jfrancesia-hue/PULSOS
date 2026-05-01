@@ -154,18 +154,14 @@ export class ClinicalService {
     });
     if (!professional) throw new ForbiddenException('Falta tu perfil profesional.');
 
-    // Crea un consent en estado pendiente — en prod requeriría confirmación del ciudadano.
-    // Por ahora MVP: crea consent vigente por 7 días para demos. Codex debería:
-    //   1. Cambiar a "ConsentRequest" con estado PENDING.
-    //   2. Notificar push/email al ciudadano.
-    //   3. Permitir confirmación/rechazo.
+    // Crea consent en estado PENDING. El ciudadano lo aprueba o rechaza desde su panel.
     const consent = await this.prisma.client.consent.create({
       data: {
         ciudadanoId: profile.userId,
         profesionalId: professional.id,
         scopes: dto.scopes as never,
         motivo: dto.motivo,
-        expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+        status: 'PENDING',
       },
     });
     await this.audit.append({
@@ -175,15 +171,15 @@ export class ClinicalService {
       targetType: 'Consent',
       targetId: consent.id,
       outcome: 'SUCCESS',
-      payload: { scopes: dto.scopes, motivo: dto.motivo, demo: true },
+      payload: { scopes: dto.scopes, motivo: dto.motivo, status: 'requested' },
     });
 
     await this.notifications.dispatchMulti(
       {
         userId: profile.userId,
-        category: 'CONSENT_GRANTED',
-        title: 'Acceso clínico autorizado',
-        body: `Dr/a. ${professional.nombre} ${professional.apellido} (M.N. ${professional.matriculaNacional ?? '—'}) ya tiene acceso a tu perfil clínico para: ${dto.motivo}. Podés revocar el acceso desde tu panel de consentimientos.`,
+        category: 'CONSENT_REQUEST',
+        title: 'Solicitud de acceso clínico',
+        body: `Dr/a. ${professional.nombre} ${professional.apellido} (M.N. ${professional.matriculaNacional ?? '—'}) solicita acceso a tu perfil clínico para: "${dto.motivo}". Aprobá o rechazá desde tu panel de consentimientos.`,
         payload: {
           consentId: consent.id,
           actionUrl: `${process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'}/panel/consentimientos`,
@@ -195,6 +191,114 @@ export class ClinicalService {
     return consent;
   }
 
+  /**
+   * El ciudadano responde a una solicitud de consent: aprobar o rechazar.
+   */
+  async respondConsent(
+    citizenUserId: string,
+    consentId: string,
+    decision: 'APPROVE' | 'REJECT',
+    opts: { rejectionReason?: string; durationDays?: number },
+  ) {
+    const consent = await this.prisma.client.consent.findUnique({ where: { id: consentId } });
+    if (!consent) throw new NotFoundException('Solicitud no encontrada.');
+    if (consent.ciudadanoId !== citizenUserId) {
+      throw new ForbiddenException('No es tu solicitud.');
+    }
+    if (consent.status !== 'PENDING') {
+      throw new BadRequestException(`La solicitud ya fue ${consent.status.toLowerCase()}.`);
+    }
+
+    if (decision === 'REJECT') {
+      const updated = await this.prisma.client.consent.update({
+        where: { id: consentId },
+        data: {
+          status: 'REJECTED',
+          rejectionReason: opts.rejectionReason ?? null,
+          revokedAt: new Date(),
+        },
+      });
+      await this.audit.append({
+        actorId: citizenUserId,
+        actorRole: 'CIUDADANO',
+        action: 'CONSENT_REVOKED',
+        targetType: 'Consent',
+        targetId: consentId,
+        outcome: 'SUCCESS',
+        payload: { decision: 'rejected', reason: opts.rejectionReason ?? null },
+      });
+      return updated;
+    }
+
+    const days = opts.durationDays ?? 30;
+    const expiresAt = new Date(Date.now() + days * 24 * 3600 * 1000);
+    const updated = await this.prisma.client.consent.update({
+      where: { id: consentId },
+      data: {
+        status: 'APPROVED',
+        grantedAt: new Date(),
+        expiresAt,
+      },
+    });
+    await this.audit.append({
+      actorId: citizenUserId,
+      actorRole: 'CIUDADANO',
+      action: 'CONSENT_GRANTED',
+      targetType: 'Consent',
+      targetId: consentId,
+      outcome: 'SUCCESS',
+      payload: { decision: 'approved', durationDays: days },
+    });
+
+    // Notificar al profesional que ya tiene acceso.
+    if (consent.profesionalId) {
+      const professional = await this.prisma.client.professionalProfile.findUnique({
+        where: { id: consent.profesionalId },
+        select: { userId: true, nombre: true, apellido: true },
+      });
+      if (professional) {
+        await this.notifications.dispatch({
+          userId: professional.userId,
+          channel: 'IN_APP',
+          category: 'CONSENT_GRANTED',
+          title: 'Acceso clínico aprobado',
+          body: `El paciente aprobó tu solicitud por ${days} días. Ya podés ver su perfil clínico.`,
+          payload: { consentId, actionUrl: '/portal-profesional/buscar' },
+        });
+      }
+    }
+
+    return updated;
+  }
+
+  /**
+   * Ciudadano revoca un consent vigente.
+   */
+  async revokeConsent(citizenUserId: string, consentId: string) {
+    const consent = await this.prisma.client.consent.findUnique({ where: { id: consentId } });
+    if (!consent) throw new NotFoundException('Consent no encontrado.');
+    if (consent.ciudadanoId !== citizenUserId) {
+      throw new ForbiddenException('No es tu consent.');
+    }
+    if (consent.status !== 'APPROVED') {
+      throw new BadRequestException(`No podés revocar un consent en estado ${consent.status}.`);
+    }
+    const updated = await this.prisma.client.consent.update({
+      where: { id: consentId },
+      data: { status: 'REVOKED', revokedAt: new Date() },
+    });
+    await this.audit.append({
+      actorId: citizenUserId,
+      actorRole: 'CIUDADANO',
+      action: 'CONSENT_REVOKED',
+      targetType: 'Consent',
+      targetId: consentId,
+      outcome: 'SUCCESS',
+      payload: { reason: 'self_revoked' },
+    });
+    return updated;
+  }
+
   private async findVigentConsent(professionalUserId: string, citizenUserId: string) {
     const professional = await this.prisma.client.professionalProfile.findUnique({
       where: { userId: professionalUserId },
@@ -204,7 +308,7 @@ export class ClinicalService {
       where: {
         ciudadanoId: citizenUserId,
         profesionalId: professional.id,
-        revokedAt: null,
+        status: 'APPROVED',
         OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
       },
       orderBy: { grantedAt: 'desc' },
