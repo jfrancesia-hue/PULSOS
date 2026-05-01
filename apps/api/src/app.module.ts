@@ -5,6 +5,7 @@ import { APP_GUARD } from '@nestjs/core';
 
 import { PrismaModule } from './common/prisma/prisma.module';
 import { AuditModule } from './common/audit/audit.module';
+import { AuthCommonModule } from './common/auth';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { PulsoIdModule } from './modules/pulso-id/pulso-id.module';
@@ -25,6 +26,7 @@ import { HealthController } from './modules/health/health.controller';
     ]),
     PrismaModule,
     AuditModule,
+    AuthCommonModule,
     AuthModule,
     UsersModule,
     PulsoIdModule,

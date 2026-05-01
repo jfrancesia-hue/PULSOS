@@ -1,5 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { randomBytes } from 'node:crypto';
 import type { EmergencyPublicView } from '@pulso/types';
+import { TTL_TO_SECONDS, type EmergencyTtl } from '@pulso/types';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { AuditService } from '../../common/audit/audit.service';
 
@@ -19,9 +21,7 @@ export class EmergencyService {
     const qr = await this.prisma.client.emergencyAccess.findUnique({
       where: { token },
       include: {
-        user: {
-          include: { citizenProfile: true },
-        },
+        user: { include: { citizenProfile: true } },
       },
     });
 
@@ -32,7 +32,6 @@ export class EmergencyService {
 
     const profile = qr.user.citizenProfile;
 
-    // Registramos el acceso (sync con audit log + log específico de emergencia).
     await this.prisma.client.emergencyAccessLog.create({
       data: {
         emergencyAccessId: qr.id,
@@ -60,8 +59,11 @@ export class EmergencyService {
     const condiciones = (profile.condicionesCriticas as Array<{ nombre: string }>).map(
       (c) => c.nombre,
     );
-    const medicacion = (profile.medicacionHabitual as Array<{ nombre: string; presentacion?: string; posologia?: string }>).map(
-      (m) => `${m.nombre}${m.presentacion ? ' · ' + m.presentacion : ''}${m.posologia ? ' · ' + m.posologia : ''}`,
+    const medicacion = (
+      profile.medicacionHabitual as Array<{ nombre: string; presentacion?: string; posologia?: string }>
+    ).map(
+      (m) =>
+        `${m.nombre}${m.presentacion ? ' · ' + m.presentacion : ''}${m.posologia ? ' · ' + m.posologia : ''}`,
     );
 
     const ce = profile.contactoEmergencia as
@@ -93,6 +95,64 @@ export class EmergencyService {
         : null,
       emitidoEn: qr.createdAt.toISOString(),
     };
+  }
+
+  listByUser(userId: string) {
+    return this.prisma.client.emergencyAccess.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+      include: { _count: { select: { logs: true } } },
+    });
+  }
+
+  async create(userId: string, ttl: EmergencyTtl) {
+    const ttlSeconds = TTL_TO_SECONDS[ttl];
+    const expiresAt = ttlSeconds ? new Date(Date.now() + ttlSeconds * 1000) : null;
+    const token = randomBytes(24).toString('hex');
+    const qr = await this.prisma.client.emergencyAccess.create({
+      data: { userId, token, ttl, expiresAt },
+    });
+    await this.audit.append({
+      actorId: userId,
+      actorRole: 'CIUDADANO',
+      action: 'EMERGENCY_QR_GENERATED',
+      targetType: 'EmergencyAccess',
+      targetId: qr.id,
+      outcome: 'SUCCESS',
+      payload: { ttl },
+    });
+    return qr;
+  }
+
+  async revoke(userId: string, qrId: string) {
+    const qr = await this.prisma.client.emergencyAccess.findUnique({ where: { id: qrId } });
+    if (!qr) throw new NotFoundException('QR no encontrado.');
+    if (qr.userId !== userId) throw new ForbiddenException('No es tu QR.');
+    const updated = await this.prisma.client.emergencyAccess.update({
+      where: { id: qrId },
+      data: { revokedAt: new Date() },
+    });
+    await this.audit.append({
+      actorId: userId,
+      actorRole: 'CIUDADANO',
+      action: 'EMERGENCY_QR_REVOKED',
+      targetType: 'EmergencyAccess',
+      targetId: qrId,
+      outcome: 'SUCCESS',
+      payload: {},
+    });
+    return updated;
+  }
+
+  async logsForUser(userId: string, qrId: string) {
+    const qr = await this.prisma.client.emergencyAccess.findUnique({ where: { id: qrId } });
+    if (!qr) throw new NotFoundException('QR no encontrado.');
+    if (qr.userId !== userId) throw new ForbiddenException('No es tu QR.');
+    return this.prisma.client.emergencyAccessLog.findMany({
+      where: { emergencyAccessId: qrId },
+      orderBy: { accessedAt: 'desc' },
+      take: 100,
+    });
   }
 }
 

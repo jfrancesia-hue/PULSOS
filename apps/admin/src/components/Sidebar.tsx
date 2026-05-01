@@ -6,28 +6,24 @@ import {
   Stethoscope,
   Building2,
   QrCode,
-  Sparkles,
   ShieldCheck,
-  FileText,
-  Settings,
-  Activity,
   Network,
+  LogOut,
 } from 'lucide-react';
+import { logoutAction } from '../app/(panel)/actions';
 
 const NAV = [
-  { href: '/', label: 'Resumen', icon: LayoutDashboard, active: true },
-  { href: '/pacientes', label: 'Pacientes', icon: Users },
+  { href: '/', label: 'Resumen', icon: LayoutDashboard },
+  { href: '/usuarios', label: 'Usuarios', icon: Users },
   { href: '/profesionales', label: 'Profesionales', icon: Stethoscope },
   { href: '/instituciones', label: 'Instituciones', icon: Building2 },
-  { href: '/emergencia', label: 'Emergencia', icon: QrCode },
-  { href: '/mica', label: 'Mica IA', icon: Sparkles },
+  { href: '/accesos-emergencia', label: 'Accesos QR', icon: QrCode },
   { href: '/auditoria', label: 'Auditoría', icon: ShieldCheck },
-  { href: '/documentos', label: 'Documentos', icon: FileText },
   { href: '/connect', label: 'Connect', icon: Network },
-  { href: '/configuracion', label: 'Configuración', icon: Settings },
 ];
 
-export function Sidebar() {
+export function Sidebar({ email }: { email?: string }) {
+  const initials = (email ?? 'AD').slice(0, 2).toUpperCase();
   return (
     <aside className="fixed inset-y-0 left-0 z-30 flex w-72 flex-col border-r border-white/5 bg-pulso-azul-medianoche/95 backdrop-blur-xl">
       <div className="flex items-center gap-3 border-b border-white/5 px-6 py-6">
@@ -40,11 +36,7 @@ export function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 rounded-md px-3 py-2.5 text-sm transition-colors ${
-                item.active
-                  ? 'bg-pulso-turquesa/10 text-pulso-turquesa'
-                  : 'text-pulso-niebla hover:bg-white/[0.03] hover:text-pulso-blanco-calido'
-              }`}
+              className="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm text-pulso-niebla transition-colors hover:bg-white/[0.03] hover:text-pulso-blanco-calido"
             >
               <Icon size={16} strokeWidth={1.6} />
               <span>{item.label}</span>
@@ -55,13 +47,21 @@ export function Sidebar() {
       <div className="border-t border-white/5 p-4">
         <div className="flex items-center gap-3 rounded-md bg-white/[0.02] px-3 py-2.5">
           <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-pulso-cobre/20 text-xs font-semibold text-pulso-cobre">
-            MS
+            {initials}
           </div>
           <div className="min-w-0 flex-1">
-            <div className="truncate text-sm font-medium">Min. Salud</div>
-            <div className="truncate text-xs text-pulso-niebla">superadmin@pulso.gob.ar</div>
+            <div className="truncate text-sm font-medium">Pulso Admin</div>
+            <div className="truncate text-xs text-pulso-niebla">{email ?? '—'}</div>
           </div>
-          <Activity size={14} className="text-success" />
+          <form action={logoutAction}>
+            <button
+              type="submit"
+              aria-label="Cerrar sesión"
+              className="rounded-md p-1.5 text-pulso-niebla hover:bg-white/[0.05] hover:text-danger"
+            >
+              <LogOut size={14} />
+            </button>
+          </form>
         </div>
       </div>
     </aside>

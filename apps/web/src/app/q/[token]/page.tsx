@@ -18,7 +18,7 @@ interface EmergencyData {
 async function fetchEmergency(token: string): Promise<EmergencyData | null> {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
   try {
-    const res = await fetch(`${apiUrl}/api/emergency/${token}`, {
+    const res = await fetch(`${apiUrl}/api/emergency/public/${token}`, {
       cache: 'no-store',
       headers: { Accept: 'application/json' },
     });
