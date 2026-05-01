@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pulso · Estado del proyecto</title>
+<style>
+  /* ================ Design tokens reales del proyecto ================ */
+  :root {
+    --azul-profundo: #0A1628;
+    --azul-noche:    #0F1F3D;
+    --azul-medianoche: #050B14;
+    --turquesa:      #2BD4C9;
+    --turquesa-glow: #5EE7DE;
+    --turquesa-deep: #14807A;
+    --cobre:         #D97847;
+    --cobre-deep:    #A85829;
+    --blanco-calido: #F5F1EA;
+    --niebla:        #C7CDD9;
+    --success:       #2BD49A;
+    --warning:       #F5B647;
+    --danger:        #E55A4C;
+    --info:          #4FA3F0;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--azul-profundo);
+    color: var(--blanco-calido);
+    font: 15px/1.5 'Inter','Manrope',system-ui,-apple-system,sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(at 0% 0%, rgba(43,212,201,0.10) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, rgba(217,120,71,0.06) 0px, transparent 50%),
+      radial-gradient(at 50% 100%, rgba(43,212,201,0.06) 0px, transparent 50%);
+  }
+  main { position: relative; z-index: 1; max-width: 1280px; margin: 0 auto; padding: 48px 32px 96px; }
+
+  /* ================ Topbar ================ */
+  .topbar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 16px 0; margin-bottom: 56px;
+  }
+  .logo { display: flex; align-items: center; gap: 12px; font-weight: 800; letter-spacing: 0.04em; font-size: 18px; }
+  .logo .pulse {
+    width: 28px; height: 28px;
+    background: linear-gradient(135deg, var(--turquesa), var(--turquesa-deep));
+    border-radius: 8px; position: relative;
+    box-shadow: 0 0 24px rgba(43,212,201,0.4);
+  }
+  .logo .pulse::before {
+    content: ''; position: absolute; inset: 6px;
+    background: linear-gradient(135deg, transparent 40%, var(--azul-medianoche) 41%, var(--azul-medianoche) 50%, transparent 51%);
+  }
+  .meta { display: flex; gap: 16px; font-size: 12px; color: var(--niebla); }
+  .meta span { padding: 4px 10px; border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; }
+  .meta .commit { background: rgba(43,212,201,0.08); color: var(--turquesa); border-color: rgba(43,212,201,0.3); font-family: monospace; }
+
+  /* ================ Hero ================ */
+  .hero { margin-bottom: 64px; max-width: 720px; }
+  .hero .kicker { color: var(--turquesa); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.18em; }
+  .hero h1 { font-family: 'Manrope', sans-serif; font-size: 56px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.05; margin: 16px 0 24px; }
+  .hero h1 .grad { background: linear-gradient(90deg, var(--turquesa), var(--turquesa-glow)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero p { color: var(--niebla); font-size: 18px; max-width: 600px; }
+
+  /* ================ KPIs ================ */
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 64px; }
+  .kpi { background: var(--azul-noche); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 20px; }
+  .kpi .label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--niebla); }
+  .kpi .value { font-family: 'Manrope', sans-serif; font-size: 32px; font-weight: 700; margin-top: 6px; letter-spacing: -0.02em; }
+  .kpi.t .value { color: var(--turquesa); }
+  .kpi.c .value { color: var(--cobre); }
+  .kpi .delta { font-size: 11px; margin-top: 6px; color: var(--success); }
+
+  /* ================ Sections ================ */
+  section { margin-bottom: 80px; }
+  section h2 { font-family: 'Manrope', sans-serif; font-size: 32px; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 8px; }
+  section .desc { color: var(--niebla); margin-bottom: 32px; max-width: 720px; }
+
+  /* ================ Cards / preview frames ================ */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .card { background: var(--azul-noche); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 24px; transition: border-color .2s ease; }
+  .card:hover { border-color: rgba(43,212,201,0.3); }
+  .card h3 { font-family: 'Manrope', sans-serif; font-size: 18px; margin: 0 0 6px; }
+  .card .sub { font-size: 13px; color: var(--niebla); margin-bottom: 16px; }
+  .card.glass { background: rgba(15,31,61,0.6); backdrop-filter: blur(16px); border-color: rgba(43,212,201,0.15); }
+
+  /* ================ Mockup screens ================ */
+  .screen {
+    border: 2px solid rgba(43,212,201,0.2);
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--azul-medianoche);
+    box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+  }
+  .screen-bar {
+    background: var(--azul-medianoche);
+    padding: 8px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11px; color: var(--niebla);
+    font-family: monospace;
+  }
+  .screen-bar .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .screen-bar .dot.r { background: #ff5f56; }
+  .screen-bar .dot.y { background: #ffbd2e; }
+  .screen-bar .dot.g { background: #27c93f; }
+  .screen-bar .url { margin-left: 12px; color: var(--niebla); }
+
+  /* ================ Hero mockup ================ */
+  .mock-hero {
+    padding: 40px 32px;
+    background: linear-gradient(135deg, var(--azul-profundo), var(--azul-medianoche));
+    position: relative; overflow: hidden;
+  }
+  .mock-hero::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse at 0% 0%, rgba(43,212,201,0.18) 0px, transparent 40%),
+      radial-gradient(ellipse at 100% 50%, rgba(217,120,71,0.08) 0px, transparent 40%);
+  }
+  .mock-hero .kicker { color: var(--turquesa); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.18em; position: relative; }
+  .mock-hero h1 { font-family: 'Manrope', sans-serif; font-size: 36px; font-weight: 800; line-height: 1.05; letter-spacing: -0.02em; margin: 12px 0 16px; position: relative; }
+  .mock-hero h1 .grad { background: linear-gradient(90deg, var(--turquesa), var(--turquesa-glow)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .mock-hero p { color: var(--niebla); font-size: 13px; max-width: 380px; position: relative; }
+  .mock-hero .ctas { display: flex; gap: 8px; margin-top: 20px; position: relative; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; }
+  .btn-primary { background: var(--turquesa); color: var(--azul-medianoche); box-shadow: 0 0 20px rgba(43,212,201,0.3); }
+  .btn-outline { border: 1px solid rgba(255,255,255,0.2); color: var(--blanco-calido); }
+  .btn-cobre { background: var(--cobre); color: var(--azul-medianoche); }
+
+  /* ================ Panel ciudadano mockup ================ */
+  .mock-panel { display: grid; grid-template-columns: 180px 1fr; min-height: 420px; }
+  .mock-panel .sidebar { background: rgba(5,11,20,0.95); border-right: 1px solid rgba(255,255,255,0.05); padding: 16px 8px; }
+  .mock-panel .sidebar .item { padding: 8px 12px; border-radius: 6px; font-size: 11px; color: var(--niebla); display: flex; align-items: center; gap: 8px; margin-bottom: 2px; }
+  .mock-panel .sidebar .item.active { background: rgba(43,212,201,0.10); color: var(--turquesa); }
+  .mock-panel .sidebar .item .ico { width: 12px; height: 12px; opacity: 0.7; }
+  .mock-panel .body { padding: 24px; }
+  .mock-panel .body h2 { font-size: 22px; margin: 0 0 16px; }
+  .mock-panel .body .stats { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px; }
+  .mock-panel .body .stat { background: rgba(15,31,61,0.6); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 10px; }
+  .mock-panel .body .stat .label { font-size: 8px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--niebla); }
+  .mock-panel .body .stat .value { font-size: 18px; font-weight: 700; margin-top: 4px; }
+  .mock-panel .body .stat.t .value { color: var(--turquesa); }
+  .mock-panel .body .stat.c .value { color: var(--cobre); }
+  .mock-panel .body .row {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 6px; padding: 8px 10px; font-size: 11px; margin-bottom: 6px;
+  }
+  .mock-panel .body .row .pill { padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 600; }
+  .pill-cobre { background: rgba(217,120,71,0.15); color: var(--cobre); }
+  .pill-turquesa { background: rgba(43,212,201,0.15); color: var(--turquesa); }
+
+  /* ================ QR mockup ================ */
+  .mock-qr {
+    padding: 32px; text-align: center;
+    background: var(--azul-medianoche);
+  }
+  .qr-frame { background: var(--blanco-calido); border-radius: 12px; padding: 16px; display: inline-block; margin-bottom: 16px; }
+  .qr-grid { display: grid; grid-template-columns: repeat(15, 8px); gap: 1px; }
+  .qr-cell { width: 8px; height: 8px; }
+  .qr-cell.on { background: var(--azul-medianoche); }
+  .mock-qr .name { font-family: 'Manrope', sans-serif; font-size: 14px; font-weight: 600; }
+  .mock-qr .meta { font-size: 11px; color: var(--niebla); margin-top: 4px; }
+  .mock-qr .badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 6px; background: rgba(217,120,71,0.10); border: 1px solid rgba(217,120,71,0.3); color: var(--cobre); font-size: 10px; font-weight: 600; margin-top: 12px; }
+
+  /* ================ Admin mockup ================ */
+  .mock-admin { display: grid; grid-template-columns: 200px 1fr; min-height: 420px; }
+  .mock-admin .sidebar { background: rgba(5,11,20,0.95); padding: 16px 8px; border-right: 1px solid rgba(255,255,255,0.05); }
+  .mock-admin .body { padding: 24px; }
+  .mock-admin .body .grid-3 { gap: 8px; }
+  .mock-admin .table {
+    border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; overflow: hidden;
+    margin-top: 16px; font-size: 10px;
+  }
+  .mock-admin .table .tr { display: grid; grid-template-columns: 1.4fr 1fr 0.8fr 0.6fr; padding: 8px 12px; border-top: 1px solid rgba(255,255,255,0.04); }
+  .mock-admin .table .tr.head { background: rgba(255,255,255,0.02); color: var(--niebla); text-transform: uppercase; letter-spacing: 0.1em; font-size: 9px; border-top: 0; }
+
+  /* ================ Status board ================ */
+  .status-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .col-done { border-color: rgba(43,212,154,0.25); }
+  .col-progress { border-color: rgba(245,182,71,0.25); }
+  .col-todo { border-color: rgba(229,90,76,0.25); }
+  .col-done h3::before, .col-progress h3::before, .col-todo h3::before {
+    content: ''; display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; vertical-align: middle;
+  }
+  .col-done h3::before { background: var(--success); box-shadow: 0 0 8px var(--success); }
+  .col-progress h3::before { background: var(--warning); box-shadow: 0 0 8px var(--warning); }
+  .col-todo h3::before { background: var(--danger); }
+  .check-list { list-style: none; margin: 0; padding: 0; font-size: 13px; }
+  .check-list li { padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04); display: flex; align-items: flex-start; gap: 10px; color: var(--niebla); line-height: 1.5; }
+  .check-list li:last-child { border-bottom: 0; }
+  .check-list li .check { flex-shrink: 0; width: 16px; height: 16px; margin-top: 2px; border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; }
+  .col-done .check { border-color: var(--success); background: rgba(43,212,154,0.15); color: var(--success); }
+  .col-progress .check { border-color: var(--warning); color: var(--warning); }
+  .col-todo .check { border-color: var(--danger); color: var(--danger); }
+
+  /* ================ Tree ================ */
+  .tree { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; line-height: 1.7; color: var(--niebla); }
+  .tree .name { color: var(--blanco-calido); }
+  .tree .dir { color: var(--turquesa); font-weight: 600; }
+  .tree .file { color: var(--niebla); }
+  .tree .new { color: var(--cobre); }
+  .tree .annotation { color: var(--niebla); margin-left: 12px; opacity: 0.7; font-size: 11px; }
+
+  /* ================ Roadmap ================ */
+  .roadmap { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .road { padding: 24px; border-radius: 16px; border: 1px solid; }
+  .road.now { border-color: rgba(43,212,201,0.4); background: rgba(43,212,201,0.04); }
+  .road.next { border-color: rgba(217,120,71,0.4); background: rgba(217,120,71,0.04); }
+  .road.later { border-color: rgba(255,255,255,0.08); background: rgba(255,255,255,0.02); }
+  .road h3 { font-family: 'Manrope', sans-serif; font-size: 18px; margin: 0 0 4px; }
+  .road .when { font-size: 10px; text-transform: uppercase; letter-spacing: 0.16em; color: var(--niebla); margin-bottom: 16px; }
+  .road.now .when { color: var(--turquesa); }
+  .road.next .when { color: var(--cobre); }
+  .road ul { margin: 0; padding-left: 20px; font-size: 13px; line-height: 1.7; color: var(--niebla); }
+  .road ul li::marker { color: rgba(255,255,255,0.3); }
+
+  /* ================ URLs table ================ */
+  .urls-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .url-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 16px;
+    background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 8px; font-family: monospace; font-size: 12px;
+  }
+  .url-row .name { color: var(--blanco-calido); font-family: 'Inter', sans-serif; font-weight: 500; font-size: 13px; }
+  .url-row .url { color: var(--turquesa); }
+
+  /* ================ Footer ================ */
+  footer {
+    margin-top: 80px; padding-top: 32px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    text-align: center; color: var(--niebla); font-size: 12px;
+  }
+
+  @media (max-width: 768px) {
+    .kpis, .grid-2, .grid-3, .status-grid, .roadmap, .urls-grid { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 36px; }
+    main { padding: 24px 16px 64px; }
+  }
+</style>
+</head>
+<body>
+
+<main>
+
+<header class="topbar">
+  <div class="logo">
+    <span class="pulse"></span>
+    PULSO
+  </div>
+  <div class="meta">
+    <span>4 commits · 209 archivos</span>
+    <span class="commit">585daf5</span>
+    <span>main</span>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="kicker">Estado del proyecto · 1 may 2026</div>
+  <h1>Pulso es un<br/><span class="grad">producto funcional</span><br/>listo para piloto.</h1>
+  <p>
+    Plataforma de salud digital argentina. 4 apps, 11 packages, auth product-grade,
+    storage real, notificaciones SMTP, recetas digitales, recordatorios y MFA TOTP.
+    Sin blockchain. Trazabilidad con hash chain SHA-256 + triggers SQL append-only.
+  </p>
+</section>
+
+<!-- =================== KPIs =================== -->
+<section class="kpis">
+  <div class="kpi t">
+    <div class="label">Apps</div>
+    <div class="value">4</div>
+    <div class="delta">api · web · admin · mobile</div>
+  </div>
+  <div class="kpi t">
+    <div class="label">Packages</div>
+    <div class="value">8</div>
+    <div class="delta">types · ui · db · auth · audit · ai · notif · integrations</div>
+  </div>
+  <div class="kpi c">
+    <div class="label">Modelos Prisma</div>
+    <div class="value">18</div>
+    <div class="delta">+5 en último commit</div>
+  </div>
+  <div class="kpi t">
+    <div class="label">Endpoints API</div>
+    <div class="value">42+</div>
+    <div class="delta">9 módulos NestJS</div>
+  </div>
+</section>
+
+<!-- =================== Cómo se ve =================== -->
+<section>
+  <h2>Cómo se ve hoy</h2>
+  <p class="desc">
+    Mockups inline replicando los componentes y design tokens reales del proyecto
+    (azul profundo, turquesa Nativos, cobre, Manrope display). No son screenshots —
+    son los mismos estilos que se renderizan en el browser.
+  </p>
+
+  <div class="grid-2">
+    <!-- Hero pública -->
+    <div>
+      <div class="screen">
+        <div class="screen-bar">
+          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          <span class="url">localhost:3000</span>
+        </div>
+        <div class="mock-hero">
+          <div class="kicker">Plataforma de salud digital argentina</div>
+          <h1>Tu salud. <span class="grad">Conectada.</span><br/>Segura. Siempre.</h1>
+          <p>Una plataforma que conecta personas, profesionales e instituciones con datos sanitarios verificados.</p>
+          <div class="ctas">
+            <span class="btn btn-primary">Conocé más →</span>
+            <span class="btn btn-outline">Solicitar demo</span>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top: 12px; font-size: 12px; color: var(--niebla);">
+        Landing pública · 9 secciones · /q/[token] · /demo · /registro
+      </div>
+    </div>
+
+    <!-- Panel ciudadano -->
+    <div>
+      <div class="screen">
+        <div class="screen-bar">
+          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          <span class="url">localhost:3000/panel</span>
+        </div>
+        <div class="mock-panel">
+          <div class="sidebar">
+            <div class="item active">▣ Inicio</div>
+            <div class="item">◐ Mi perfil</div>
+            <div class="item">▤ QR emergencia</div>
+            <div class="item">℞ Recetas</div>
+            <div class="item">⏰ Recordatorios</div>
+            <div class="item">⌒ Historial</div>
+            <div class="item">▦ Documentos</div>
+            <div class="item">⛨ Consentimientos</div>
+            <div class="item">⊘ Notificaciones</div>
+            <div class="item">✻ Mica IA</div>
+            <div class="item">⚿ Seguridad</div>
+          </div>
+          <div class="body">
+            <div style="font-size: 10px; color: var(--turquesa); text-transform: uppercase; letter-spacing: 0.18em; margin-bottom: 4px;">Pulso ID</div>
+            <h2>Hola, Ana</h2>
+            <div class="stats">
+              <div class="stat c"><div class="label">Grupo</div><div class="value">O+</div></div>
+              <div class="stat c"><div class="label">Alergias</div><div class="value">2</div></div>
+              <div class="stat t"><div class="label">Medicación</div><div class="value">1</div></div>
+              <div class="stat t"><div class="label">QR</div><div class="value">Activo</div></div>
+            </div>
+            <div style="margin-top: 16px; font-size: 11px; color: var(--niebla);">Datos críticos</div>
+            <div style="margin-top: 8px;">
+              <div class="row"><span style="color: var(--cobre);">⚠</span> Penicilina <span class="pill pill-cobre">SEVERA</span></div>
+              <div class="row"><span style="color: var(--turquesa);">♥</span> Hipertensión arterial <span class="pill pill-turquesa">Controlada</span></div>
+              <div class="row"><span style="color: var(--turquesa);">℞</span> Enalapril 10mg · 1 cada 12h</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top: 12px; font-size: 12px; color: var(--niebla);">
+        Panel ciudadano · 11 secciones · auth real · onboarding /registro
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-top: 24px;">
+    <!-- QR de emergencia -->
+    <div>
+      <div class="screen">
+        <div class="screen-bar">
+          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          <span class="url">localhost:3000/q/[token]</span>
+        </div>
+        <div class="mock-qr">
+          <div style="font-size: 10px; color: var(--niebla); text-transform: uppercase; letter-spacing: 0.16em;">Acceso de emergencia</div>
+          <div style="margin-top: 16px;">
+            <div class="qr-frame">
+              <div class="qr-grid" id="qr-cells"></div>
+            </div>
+          </div>
+          <div class="name">Ana M. Martini</div>
+          <div class="meta">DNI 32.145.678 · 41 años · O+</div>
+          <div style="margin-top: 16px; font-size: 11px;">
+            <span style="color: var(--cobre); font-weight: 600;">Alergia: Penicilina (severa)</span><br/>
+            <span style="color: var(--niebla);">Hipertensión · Enalapril 10mg · OSDE 210</span>
+          </div>
+          <div class="badge">⚡ Activo hasta 31 may 2026</div>
+        </div>
+      </div>
+      <div style="margin-top: 12px; font-size: 12px; color: var(--niebla);">
+        Página pública · audit log + email automático al ciudadano · imprimible /imprimir
+      </div>
+    </div>
+
+    <!-- Admin -->
+    <div>
+      <div class="screen">
+        <div class="screen-bar">
+          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          <span class="url">localhost:3002</span>
+        </div>
+        <div class="mock-admin">
+          <div class="sidebar">
+            <div class="item active" style="padding: 8px 12px; border-radius: 6px; font-size: 11px; color: var(--turquesa); display: flex; align-items: center; gap: 8px; background: rgba(43,212,201,0.10); margin-bottom: 2px;">▣ Resumen</div>
+            <div style="padding: 8px 12px; font-size: 11px; color: var(--niebla);">⌖ Usuarios</div>
+            <div style="padding: 8px 12px; font-size: 11px; color: var(--niebla);">⚕ Profesionales</div>
+            <div style="padding: 8px 12px; font-size: 11px; color: var(--niebla);">▦ Instituciones</div>
+            <div style="padding: 8px 12px; font-size: 11px; color: var(--niebla);">▤ Accesos QR</div>
+            <div style="padding: 8px 12px; font-size: 11px; color: var(--niebla);">⛨ Auditoría</div>
+            <div style="padding: 8px 12px; font-size: 11px; color: var(--niebla);">⇆ Connect</div>
+          </div>
+          <div class="body">
+            <div style="font-size: 10px; color: var(--turquesa); text-transform: uppercase; letter-spacing: 0.18em;">Bienvenido, equipo Pulso</div>
+            <h2 style="font-size: 22px; margin: 4px 0 12px;">Resumen institucional</h2>
+            <div class="grid-3">
+              <div class="stat" style="background: rgba(15,31,61,0.6); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 10px;">
+                <div style="font-size: 8px; color: var(--niebla); text-transform: uppercase; letter-spacing: 0.1em;">Ciudadanos</div>
+                <div style="font-size: 16px; font-weight: 700; margin-top: 4px;">5.842.193</div>
+              </div>
+              <div class="stat" style="background: rgba(15,31,61,0.6); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 10px;">
+                <div style="font-size: 8px; color: var(--niebla); text-transform: uppercase; letter-spacing: 0.1em;">Profesionales</div>
+                <div style="font-size: 16px; font-weight: 700; margin-top: 4px;">48.731</div>
+              </div>
+              <div class="stat" style="background: rgba(15,31,61,0.6); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 10px;">
+                <div style="font-size: 8px; color: var(--niebla); text-transform: uppercase; letter-spacing: 0.1em;">Hash chain</div>
+                <div style="font-size: 16px; font-weight: 700; margin-top: 4px; color: var(--success);">OK</div>
+              </div>
+            </div>
+            <div class="table">
+              <div class="tr head"><span>Acción</span><span>Actor</span><span>Target</span><span>Hora</span></div>
+              <div class="tr"><span style="color: var(--blanco-calido);">EMERGENCY_QR_ACCESSED</span><span>—</span><span>EmergencyAccess</span><span>14:32</span></div>
+              <div class="tr"><span style="color: var(--blanco-calido);">CONSENT_GRANTED</span><span>PROFESIONAL</span><span>Consent</span><span>14:28</span></div>
+              <div class="tr"><span style="color: var(--blanco-calido);">CLINICAL_RECORD_CREATED</span><span>PROFESIONAL</span><span>ClinicalRecord</span><span>14:14</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top: 12px; font-size: 12px; color: var(--niebla);">
+        Admin · 7 secciones · MFA enforcement · cambio rol/status real
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== Status board =================== -->
+<section>
+  <h2>Qué está hecho, qué queda</h2>
+  <p class="desc">
+    Tres columnas: lo que ya funciona end-to-end (verde), lo que está parcial pero
+    levantable (ámbar), y lo que es la próxima capa de producto (rojo = pendiente,
+    no urgente — nada bloquea la demo).
+  </p>
+
+  <div class="status-grid">
+    <div class="card col-done">
+      <h3>Hecho · funcional</h3>
+      <ul class="check-list">
+        <li><span class="check">✓</span><span>Auth product-grade: signup con Pulso ID, login, refresh persistido, logout, change password, MFA TOTP, lockout 5×15min</span></li>
+        <li><span class="check">✓</span><span>Verificación email + recuperación contraseña con tokens de un solo uso</span></li>
+        <li><span class="check">✓</span><span>RBAC con 6 roles + decorators @Roles/@CurrentUser/@Public</span></li>
+        <li><span class="check">✓</span><span>QR de emergencia: crear/revocar/listar logs, página pública, imprimible A4</span></li>
+        <li><span class="check">✓</span><span>Portal profesional: búsqueda DNI, consent flow, timeline, carga evolución</span></li>
+        <li><span class="check">✓</span><span>Mica IA: chat con Anthropic + mock seguro fallback + guardrails anti-prescripción</span></li>
+        <li><span class="check">✓</span><span>Audit log con hash chain SHA-256 + triggers SQL append-only</span></li>
+        <li><span class="check">✓</span><span>Storage real con MinIO + presigned URLs + guard owner-or-consent</span></li>
+        <li><span class="check">✓</span><span>Notificaciones SMTP via nodemailer + persistencia + multi-canal</span></li>
+        <li><span class="check">✓</span><span>Recetas digitales con signatureHash + dispensación por farmacia</span></li>
+        <li><span class="check">✓</span><span>Recordatorios de medicación con presets de frecuencia</span></li>
+        <li><span class="check">✓</span><span>Admin operativo: cambio rol + suspender + audit verify chain</span></li>
+        <li><span class="check">✓</span><span>Pino structured logs con redacción de PII médica</span></li>
+        <li><span class="check">✓</span><span>Health endpoints: liveness + readiness con DB + chain check</span></li>
+        <li><span class="check">✓</span><span>Mobile Expo SDK 51 con 4 pantallas (ID, QR, Mica, Docs)</span></li>
+      </ul>
+    </div>
+
+    <div class="card col-progress">
+      <h3>Parcial · funciona pero falta robustez</h3>
+      <ul class="check-list">
+        <li><span class="check">○</span><span>UI de sesiones activas en /panel/seguridad (placeholder; falta endpoint /auth/sessions)</span></li>
+        <li><span class="check">○</span><span>Recordatorios persistidos pero sin cron job que dispare a la hora (modelo tiene lastFiredAt listo)</span></li>
+        <li><span class="check">○</span><span>WhatsApp y Push: dispatcher persiste pero canales no enviados realmente (solo EMAIL e IN_APP)</span></li>
+        <li><span class="check">○</span><span>Verificación de matrícula: campo libre en seed; no hay integración con colegios</span></li>
+        <li><span class="check">○</span><span>Verificación de DNI en signup: solo formato, no contra RENAPER</span></li>
+        <li><span class="check">○</span><span>Consent flow: en MVP el profesional crea consent vigente directo (modo demo); en producción requiere confirmación push del ciudadano</span></li>
+        <li><span class="check">○</span><span>Tests: unitarios en auth + audit (15 tests). Falta integration y E2E</span></li>
+        <li><span class="check">○</span><span>Pulso Connect: stub con README + estructura, sin conectores reales HL7/FHIR</span></li>
+      </ul>
+    </div>
+
+    <div class="card col-todo">
+      <h3>Pendiente · próxima capa</h3>
+      <ul class="check-list">
+        <li><span class="check">·</span><span>Cron job de recordatorios (@nestjs/schedule) que dispare a la hora programada</span></li>
+        <li><span class="check">·</span><span>Endpoint /auth/sessions con listar y revocar tokens activos individuales</span></li>
+        <li><span class="check">·</span><span>Twilio WhatsApp Business para canal WHATSAPP real</span></li>
+        <li><span class="check">·</span><span>Expo Push notifications para mobile</span></li>
+        <li><span class="check">·</span><span>Tests integration con testcontainers Postgres efímero</span></li>
+        <li><span class="check">·</span><span>Tests E2E con Playwright en web + admin</span></li>
+        <li><span class="check">·</span><span>CI: ejecutar pnpm test + storybook visual regression en GitHub Actions</span></li>
+        <li><span class="check">·</span><span>Deploy: Render (api) + Vercel (web/admin) + Supabase (DB) + Cloudflare R2 (storage)</span></li>
+        <li><span class="check">·</span><span>EAS Build mobile + publicar en App Store + Play Store</span></li>
+        <li><span class="check">·</span><span>Conector HL7v2/FHIR R4 para primer hospital piloto</span></li>
+        <li><span class="check">·</span><span>OAuth 2.0 server para terceras apps</span></li>
+        <li><span class="check">·</span><span>DPIA + auditoría externa de seguridad pre-piloto</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- =================== URLs locales =================== -->
+<section>
+  <h2>URLs locales (cuando levantás <code>pnpm dev</code>)</h2>
+  <p class="desc">
+    Después de <code>docker compose up -d</code> + <code>pnpm install</code> +
+    <code>pnpm db:setup</code> + <code>pnpm dev</code> tenés todo esto corriendo simultáneamente.
+  </p>
+  <div class="urls-grid">
+    <div class="url-row"><span class="name">Landing pública</span><span class="url">localhost:3000</span></div>
+    <div class="url-row"><span class="name">Crear cuenta</span><span class="url">localhost:3000/registro</span></div>
+    <div class="url-row"><span class="name">Panel ciudadano</span><span class="url">localhost:3000/panel</span></div>
+    <div class="url-row"><span class="name">Portal profesional</span><span class="url">localhost:3000/portal-profesional</span></div>
+    <div class="url-row"><span class="name">Admin</span><span class="url">localhost:3002</span></div>
+    <div class="url-row"><span class="name">API + Swagger</span><span class="url">localhost:3001/api/docs</span></div>
+    <div class="url-row"><span class="name">Health readiness</span><span class="url">localhost:3001/api/health/ready</span></div>
+    <div class="url-row"><span class="name">MailHog (emails)</span><span class="url">localhost:8025</span></div>
+    <div class="url-row"><span class="name">MinIO console</span><span class="url">localhost:9001</span></div>
+    <div class="url-row"><span class="name">Mobile (Expo Go)</span><span class="url">pnpm --filter @pulso/mobile dev</span></div>
+  </div>
+</section>
+
+<!-- =================== Roadmap =================== -->
+<section>
+  <h2>Cómo seguir · 3 caminos</h2>
+  <p class="desc">
+    Tres opciones priorizadas según el objetivo. No son excluyentes — se pueden hacer en serie.
+    Mi recomendación: arrancar por el <strong>camino A</strong> (operativo) que es el más corto y deja Pulso 100% autónomo.
+  </p>
+
+  <div class="roadmap">
+    <div class="road now">
+      <div class="when">⚡ A · Esta sesión</div>
+      <h3>Operativo end-to-end</h3>
+      <p style="font-size: 13px; color: var(--niebla); margin: 0 0 16px;">
+        Cierra los gaps que dejan a Pulso depender de intervención manual. Lo que hace falta para piloto.
+      </p>
+      <ul>
+        <li>Cron job recordatorios (@nestjs/schedule)</li>
+        <li>Endpoint /auth/sessions con revocar individual</li>
+        <li>UI sessions activas conectada</li>
+        <li>Verificación email reenvío desde panel</li>
+        <li>Consent flow con aceptación del ciudadano (no auto-grant)</li>
+      </ul>
+    </div>
+
+    <div class="road next">
+      <div class="when">🛰 B · 1-2 sesiones</div>
+      <h3>Canales reales y deploy</h3>
+      <p style="font-size: 13px; color: var(--niebla); margin: 0 0 16px;">
+        Producción real con WhatsApp, push y deploy a la nube.
+      </p>
+      <ul>
+        <li>Twilio WhatsApp Business + templates aprobados</li>
+        <li>Expo Push en mobile + EAS Build</li>
+        <li>Deploy api a Render + web/admin a Vercel</li>
+        <li>Supabase managed Postgres + Cloudflare R2 storage</li>
+        <li>CI/CD con preview deploys por PR</li>
+      </ul>
+    </div>
+
+    <div class="road later">
+      <div class="when">🏛 C · Mediano plazo</div>
+      <h3>Interoperabilidad y compliance</h3>
+      <p style="font-size: 13px; color: var(--niebla); margin: 0 0 16px;">
+        Lo que hace a Pulso defendible y vendible a gobiernos.
+      </p>
+      <ul>
+        <li>Conector HL7v2 + FHIR R4 (primer hospital piloto)</li>
+        <li>OAuth 2.0 server para terceras apps</li>
+        <li>RENAPER para verificación DNI</li>
+        <li>Verificación matrícula vs colegios profesionales</li>
+        <li>DPIA + auditoría externa pre-piloto</li>
+        <li>Tests E2E + integration con testcontainers</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- =================== Tree =================== -->
+<section>
+  <h2>Estructura del repo</h2>
+  <p class="desc">11 paquetes en monorepo Turborepo + pnpm. Verde = tocado en último commit.</p>
+  <div class="card">
+    <div class="tree">
+<span class="dir">📁 pulsos/</span>
+├── <span class="dir">apps/</span>
+│   ├── <span class="dir">api/</span>                 <span class="annotation">NestJS 10 · 9 módulos · Pino · Swagger</span>
+│   │   └── <span class="dir">src/modules/</span>     <span class="annotation">auth · users · pulso-id · emergency · clinical · prescriptions ·</span>
+│   │       <span class="annotation">                                                            reminders · mica · admin · connect · notifications · storage · health</span>
+│   ├── <span class="dir">web/</span>                 <span class="annotation">Next.js 16 · landing + panel + portal-profesional</span>
+│   │   └── <span class="dir">src/app/</span>         <span class="annotation">+ /registro · /verificar-email · /recuperar-contrasena · /reset</span>
+│   ├── <span class="dir">admin/</span>               <span class="annotation">Next.js 16 · route group (panel) + ingresar</span>
+│   └── <span class="dir">mobile/</span>              <span class="annotation">Expo SDK 51 · 4 pantallas</span>
+├── <span class="dir">packages/</span>
+│   ├── <span class="dir">types/</span>               <span class="annotation">DTOs Zod compartidos</span>
+│   ├── <span class="dir">ui/</span>                  <span class="annotation">Tailwind preset + componentes Card/Button/Stat/Logo</span>
+│   ├── <span class="dir">db/</span>                  <span class="annotation">Prisma 7 · 18 modelos · pgvector · triggers SQL</span>
+│   │   └── <span class="dir">prisma/</span>
+│   │       ├── <span class="file">schema.prisma</span>      <span class="annotation">+ Notification · Reminder · Prescription · EmailToken · PasswordReset</span>
+│   │       ├── <span class="new">apply-triggers.ts</span>  <span class="annotation">aplica triggers SQL idempotente</span>
+│   │       └── <span class="dir">sql/</span>
+│   │           └── <span class="file">append_only_audit.sql</span>
+│   ├── <span class="dir">auth/</span>                <span class="annotation">bcrypt + jose JWT + MFA TOTP + verifyPasswordHybrid + tokens</span>
+│   ├── <span class="dir">audit/</span>               <span class="annotation">Hash chain SHA-256 + verifyChain + tests</span>
+│   ├── <span class="dir">ai/</span>                  <span class="annotation">Anthropic + guardrails + mock fallback</span>
+│   ├── <span class="dir">notifications/</span>       <span class="annotation">stub interface (deprecado: ahora vive en apps/api)</span>
+│   └── <span class="dir">integrations/</span>        <span class="annotation">stubs Pulso Connect</span>
+├── <span class="dir">docs/</span>
+│   ├── <span class="file">PRODUCT_VISION.md</span>
+│   ├── <span class="file">ARCHITECTURE.md</span>
+│   ├── <span class="file">DESIGN_SYSTEM.md</span>
+│   ├── <span class="file">MVP_SCOPE.md</span>
+│   ├── <span class="file">CODEX_HANDOFF.md</span>
+│   ├── <span class="file">INSTALL.md</span>          <span class="annotation">15-min setup</span>
+│   ├── <span class="file">ENV.md</span>
+│   ├── <span class="file">API.md</span>
+│   ├── <span class="file">DEMO_SCRIPT.md</span>
+│   ├── <span class="file">PITCH_NOTES.md</span>
+│   ├── <span class="file">NEXT_STEPS.md</span>
+│   └── <span class="new">STATUS.html</span>          <span class="annotation">← este archivo</span>
+├── <span class="file">docker-compose.yml</span>      <span class="annotation">postgres + minio + mailhog</span>
+├── <span class="file">turbo.json</span>
+└── <span class="file">README.md</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Pulso · Plataforma de salud digital argentina · Por Nativos Consultora Digital<br>
+  Generado el 1 de mayo de 2026 · commit 585daf5 · github.com/jfrancesia-hue/PULSOS
+</footer>
+
+</main>
+
+<script>
+// QR fake determinístico
+(function () {
+  var grid = document.getElementById('qr-cells');
+  if (!grid) return;
+  var hash = 17;
+  for (var i = 0; i < 225; i++) {
+    var cell = document.createElement('div');
+    cell.className = 'qr-cell';
+    var seed = (hash + i * 9301 + 49297) % 233280;
+    if (seed / 233280 > 0.46) cell.classList.add('on');
+    grid.appendChild(cell);
+  }
+  // Esquinas position-marker (solid) for QR realism
+  [0,1,2,3,4, 10,11,12,13,14, 150,151,152,153,154, 165,166,167,168,169].forEach(function (i) {
+    if (grid.children[i]) grid.children[i].classList.add('on');
+  });
+})();
+</script>
+
+</body>
+</html>
