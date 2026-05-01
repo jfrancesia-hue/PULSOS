@@ -9,6 +9,10 @@ import {
   Sparkles,
   LayoutDashboard,
   LogOut,
+  Bell,
+  Pill,
+  AlarmClock,
+  Lock,
 } from 'lucide-react';
 import { requireUser } from '@/lib/session';
 import { logoutAction } from './actions';
@@ -17,10 +21,14 @@ const NAV = [
   { href: '/panel', label: 'Inicio', icon: LayoutDashboard },
   { href: '/panel/perfil', label: 'Mi perfil', icon: IdCard },
   { href: '/panel/qr', label: 'QR emergencia', icon: QrCode },
+  { href: '/panel/recetas', label: 'Recetas', icon: Pill },
+  { href: '/panel/recordatorios', label: 'Recordatorios', icon: AlarmClock },
   { href: '/panel/historial', label: 'Historial', icon: History },
   { href: '/panel/documentos', label: 'Documentos', icon: FileText },
   { href: '/panel/consentimientos', label: 'Consentimientos', icon: ShieldCheck },
+  { href: '/panel/notificaciones', label: 'Notificaciones', icon: Bell },
   { href: '/panel/mica', label: 'Mica', icon: Sparkles },
+  { href: '/panel/seguridad', label: 'Seguridad', icon: Lock },
 ];
 
 export default async function PanelLayout({ children }: { children: React.ReactNode }) {

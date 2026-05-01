@@ -57,12 +57,14 @@ export default function IngresarPage() {
             <div className="mt-2">Contraseña común: <span className="font-mono">Pulso2026!</span></div>
           </div>
 
-          <p className="mt-6 text-center text-xs text-pulso-niebla">
-            ¿No tenés cuenta?{' '}
+          <div className="mt-6 flex items-center justify-between text-xs text-pulso-niebla">
+            <Link href="/recuperar-contrasena" className="hover:text-pulso-turquesa">
+              ¿Olvidaste tu contraseña?
+            </Link>
             <Link href="/registro" className="text-pulso-turquesa hover:underline">
               Crear Pulso ID
             </Link>
-          </p>
+          </div>
         </div>
       </div>
     </main>

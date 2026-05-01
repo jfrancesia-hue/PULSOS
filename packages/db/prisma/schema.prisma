@@ -61,9 +61,41 @@ model User {
   consentsGranted       Consent[]               @relation("CitizenConsents")
   micaConversations     MicaConversation[]
   refreshTokens         RefreshToken[]
+  notifications         Notification[]
+  emailTokens           EmailVerificationToken[]
+  passwordResets        PasswordResetToken[]
+  medicationReminders   MedicationReminder[]
+  prescriptionsReceived Prescription[]          @relation("CitizenPrescriptions")
 
   @@index([role])
   @@index([status])
+}
+
+model EmailVerificationToken {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @db.Uuid
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String    @unique
+  expiresAt DateTime
+  consumedAt DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model PasswordResetToken {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @db.Uuid
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String    @unique
+  expiresAt DateTime
+  consumedAt DateTime?
+  ip        String?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
 }
 
 model RefreshToken {
@@ -218,6 +250,7 @@ model ProfessionalProfile {
 
   clinicalRecords ClinicalRecord[] @relation("ProfessionalClinicalRecords")
   consentsAsActor Consent[]        @relation("ProfessionalConsents")
+  prescriptionsIssued Prescription[] @relation("ProfessionalPrescriptions")
 
   @@index([matriculaNacional])
 }
@@ -253,6 +286,7 @@ model Institution {
   memberships     InstitutionMembership[]
   clinicalRecords ClinicalRecord[]        @relation("InstitutionClinicalRecords")
   consents        Consent[]               @relation("InstitutionConsents")
+  prescriptions   Prescription[]          @relation("InstitutionPrescriptions")
 
   @@index([provincia])
   @@index([tipo])
@@ -503,4 +537,141 @@ model AuditLog {
   @@index([action])
   @@index([occurredAt(sort: Desc)])
   @@index([targetType, targetId])
+}
+
+// ---------------------------------------------------------------------
+//  Notificaciones
+// ---------------------------------------------------------------------
+
+enum NotificationChannel {
+  EMAIL
+  PUSH
+  WHATSAPP
+  IN_APP
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  FAILED
+  READ
+}
+
+enum NotificationCategory {
+  EMERGENCY_QR_ACCESSED
+  CONSENT_REQUEST
+  CONSENT_GRANTED
+  CLINICAL_RECORD_ADDED
+  PRESCRIPTION_ISSUED
+  MEDICATION_REMINDER
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+  WELCOME
+  OTHER
+}
+
+model Notification {
+  id          String                @id @default(uuid()) @db.Uuid
+  userId      String                @db.Uuid
+  user        User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  channel     NotificationChannel
+  category    NotificationCategory
+  status      NotificationStatus    @default(PENDING)
+  title       String
+  body        String
+  payload     Json?
+  sentAt      DateTime?
+  readAt      DateTime?
+  errorMsg    String?
+  createdAt   DateTime              @default(now())
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([status])
+  @@index([category])
+}
+
+// ---------------------------------------------------------------------
+//  Recordatorios de medicación
+// ---------------------------------------------------------------------
+
+enum ReminderFrequency {
+  DAILY
+  TWICE_DAILY
+  THREE_TIMES_DAILY
+  EVERY_8H
+  EVERY_12H
+  WEEKLY
+  CUSTOM
+}
+
+model MedicationReminder {
+  id              String            @id @default(uuid()) @db.Uuid
+  userId          String            @db.Uuid
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  medicacion      String
+  presentacion    String?
+  posologia       String?
+  frequency       ReminderFrequency
+  cronExpression  String?
+  hours           String[]          @default([])
+  startDate       DateTime          @db.Date
+  endDate         DateTime?         @db.Date
+  active          Boolean           @default(true)
+  lastFiredAt     DateTime?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  @@index([userId, active])
+  @@index([active, lastFiredAt])
+}
+
+// ---------------------------------------------------------------------
+//  Recetas digitales
+// ---------------------------------------------------------------------
+
+enum PrescriptionStatus {
+  EMITIDA
+  DISPENSADA
+  PARCIALMENTE_DISPENSADA
+  ANULADA
+  EXPIRADA
+}
+
+model Prescription {
+  id              String              @id @default(uuid()) @db.Uuid
+  ciudadanoId     String              @db.Uuid
+  ciudadano       User                @relation("CitizenPrescriptions", fields: [ciudadanoId], references: [id], onDelete: Cascade)
+  profesionalId   String              @db.Uuid
+  profesional     ProfessionalProfile @relation("ProfessionalPrescriptions", fields: [profesionalId], references: [id], onDelete: Restrict)
+  institucionId   String?             @db.Uuid
+  institucion     Institution?        @relation("InstitutionPrescriptions", fields: [institucionId], references: [id], onDelete: SetNull)
+  diagnostico     String?
+  notas           String?
+  status          PrescriptionStatus  @default(EMITIDA)
+  emitidaEn       DateTime            @default(now())
+  validaHasta     DateTime
+  dispensadaEn    DateTime?
+  signatureHash   String              @db.Char(64)
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  items           PrescriptionItem[]
+
+  @@index([ciudadanoId, emitidaEn(sort: Desc)])
+  @@index([profesionalId])
+  @@index([status])
+}
+
+model PrescriptionItem {
+  id              String       @id @default(uuid()) @db.Uuid
+  prescriptionId  String       @db.Uuid
+  prescription    Prescription @relation(fields: [prescriptionId], references: [id], onDelete: Cascade)
+  medicacion      String
+  presentacion    String?
+  posologia       String
+  cantidad        String?
+  duracionDias    Int?
+  observaciones   String?
+
+  @@index([prescriptionId])
 }

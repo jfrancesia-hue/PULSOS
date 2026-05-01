@@ -1,6 +1,7 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { AuditService } from '../../common/audit/audit.service';
+import { NotificationsService } from '../notifications/notifications.service';
 
 interface RequestCtx {
   ip: string | null;
@@ -12,6 +13,7 @@ export class ClinicalService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
+    private readonly notifications: NotificationsService,
   ) {}
 
   async searchByDni(professionalUserId: string, dni: string, ctx: RequestCtx) {
@@ -126,6 +128,16 @@ export class ClinicalService {
       userAgent: ctx.userAgent,
       payload: { tipo: dto.tipo },
     });
+
+    await this.notifications.dispatch({
+      userId: profile.userId,
+      channel: 'IN_APP',
+      category: 'CLINICAL_RECORD_ADDED',
+      title: 'Nuevo registro clínico en tu Pulso ID',
+      body: `Dr/a. ${professional.nombre} ${professional.apellido} cargó "${dto.titulo}" en tu historia clínica.`,
+      payload: { recordId: record.id, actionUrl: '/panel/historial' },
+    });
+
     return record;
   }
 
@@ -165,6 +177,24 @@ export class ClinicalService {
       outcome: 'SUCCESS',
       payload: { scopes: dto.scopes, motivo: dto.motivo, demo: true },
     });
+
+    await this.notifications.dispatch({
+      userId: profile.userId,
+      channel: 'EMAIL',
+      category: 'CONSENT_GRANTED',
+      title: 'Pulso · Acceso clínico autorizado',
+      body: `Dr/a. ${professional.nombre} ${professional.apellido} (M.N. ${professional.matriculaNacional ?? '—'}) ya tiene acceso a tu perfil clínico para: ${dto.motivo}. Podés revocar el acceso desde tu panel de consentimientos.`,
+      payload: { actionUrl: `${process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'}/panel/consentimientos` },
+    });
+    await this.notifications.dispatch({
+      userId: profile.userId,
+      channel: 'IN_APP',
+      category: 'CONSENT_GRANTED',
+      title: 'Acceso clínico autorizado',
+      body: `Dr/a. ${professional.nombre} ${professional.apellido} ya puede ver tu perfil.`,
+      payload: { consentId: consent.id, actionUrl: '/panel/consentimientos' },
+    });
+
     return consent;
   }
 

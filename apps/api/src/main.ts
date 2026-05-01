@@ -2,12 +2,14 @@ import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, Logger } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { Logger as PinoLogger } from 'nestjs-pino';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
+  app.useLogger(app.get(PinoLogger));
 
   app.use(helmet());
   app.setGlobalPrefix('api');
@@ -23,7 +25,7 @@ async function bootstrap() {
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Pulso API')
     .setDescription('Plataforma de salud digital argentina · Nativos Consultora Digital')
-    .setVersion('0.1.0')
+    .setVersion('0.2.0')
     .addBearerAuth()
     .build();
   const swaggerDoc = SwaggerModule.createDocument(app, swaggerConfig);

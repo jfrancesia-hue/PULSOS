@@ -4,6 +4,7 @@ import type { EmergencyPublicView } from '@pulso/types';
 import { TTL_TO_SECONDS, type EmergencyTtl } from '@pulso/types';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { AuditService } from '../../common/audit/audit.service';
+import { NotificationsService } from '../notifications/notifications.service';
 
 interface AccessContext {
   ip: string | null;
@@ -15,6 +16,7 @@ export class EmergencyService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
+    private readonly notifications: NotificationsService,
   ) {}
 
   async accessByToken(token: string, ctx: AccessContext): Promise<EmergencyPublicView | null> {
@@ -32,13 +34,36 @@ export class EmergencyService {
 
     const profile = qr.user.citizenProfile;
 
-    await this.prisma.client.emergencyAccessLog.create({
+    const log = await this.prisma.client.emergencyAccessLog.create({
       data: {
         emergencyAccessId: qr.id,
         ip: ctx.ip,
         userAgent: ctx.userAgent,
+        notifiedAt: new Date(),
       },
     });
+
+    // Notificación al ciudadano: sabe en tiempo real que alguien accedió a su QR.
+    await this.notifications.dispatch({
+      userId: qr.userId,
+      channel: 'EMAIL',
+      category: 'EMERGENCY_QR_ACCESSED',
+      title: '🚨 Acceso a tu QR de emergencia',
+      body: `Alguien acaba de escanear tu QR de emergencia${ctx.ip ? ` desde la IP ${ctx.ip}` : ''}. Si no estás en una emergencia o no autorizaste este acceso, te recomendamos revocar el QR desde tu panel.`,
+      payload: {
+        actionUrl: `${process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'}/panel/historial`,
+        accessLogId: log.id,
+      },
+    });
+    await this.notifications.dispatch({
+      userId: qr.userId,
+      channel: 'IN_APP',
+      category: 'EMERGENCY_QR_ACCESSED',
+      title: 'Acceso a tu QR de emergencia',
+      body: ctx.ip ? `Acceso desde IP ${ctx.ip}` : 'Acceso registrado',
+      payload: { accessLogId: log.id },
+    });
+
     await this.audit.append({
       actorId: null,
       actorRole: null,

@@ -1,5 +1,6 @@
 import { Card, CardHeader, CardTitle, CardDescription, Badge } from '@pulso/ui';
 import { apiAuthed } from '@/lib/api';
+import { UserActions } from './UserActions';
 
 interface AdminUserRow {
   id: string;
@@ -56,7 +57,8 @@ export default async function UsuariosPage({
                 <th className="py-2 pr-4 font-medium">Rol</th>
                 <th className="py-2 pr-4 font-medium">Estado</th>
                 <th className="py-2 pr-4 font-medium">MFA</th>
-                <th className="py-2 pr-4 font-medium text-right">Último acceso</th>
+                <th className="py-2 pr-4 font-medium">Último acceso</th>
+                <th className="py-2 pr-4 font-medium text-right">Acciones</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
@@ -105,8 +107,11 @@ export default async function UsuariosPage({
                   <td className="py-3 pr-4">
                     {u.mfaEnabled ? <Badge variant="success">Sí</Badge> : <Badge variant="neutral">No</Badge>}
                   </td>
-                  <td className="py-3 pr-4 text-right text-xs text-pulso-niebla">
+                  <td className="py-3 pr-4 text-xs text-pulso-niebla">
                     {u.lastLoginAt ? new Date(u.lastLoginAt).toLocaleString('es-AR') : '—'}
+                  </td>
+                  <td className="relative py-3 pr-2 text-right">
+                    <UserActions userId={u.id} currentRole={u.role} currentStatus={u.status} />
                   </td>
                 </tr>
               ))}
