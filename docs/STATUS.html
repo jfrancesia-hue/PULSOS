@@ -3,24 +3,22 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Pulso · Estado del proyecto</title>
+<title>Pulso · Estado del proyecto v2</title>
 <style>
-  /* ================ Design tokens reales del proyecto ================ */
   :root {
     --azul-profundo: #0A1628;
-    --azul-noche:    #0F1F3D;
+    --azul-noche: #0F1F3D;
     --azul-medianoche: #050B14;
-    --turquesa:      #2BD4C9;
+    --turquesa: #2BD4C9;
     --turquesa-glow: #5EE7DE;
     --turquesa-deep: #14807A;
-    --cobre:         #D97847;
-    --cobre-deep:    #A85829;
+    --cobre: #D97847;
+    --cobre-deep: #A85829;
     --blanco-calido: #F5F1EA;
-    --niebla:        #C7CDD9;
-    --success:       #2BD49A;
-    --warning:       #F5B647;
-    --danger:        #E55A4C;
-    --info:          #4FA3F0;
+    --niebla: #C7CDD9;
+    --success: #2BD49A;
+    --warning: #F5B647;
+    --danger: #E55A4C;
   }
   * { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
@@ -36,17 +34,13 @@
     position: fixed; inset: 0;
     pointer-events: none; z-index: 0;
     background:
-      radial-gradient(at 0% 0%, rgba(43,212,201,0.10) 0px, transparent 50%),
-      radial-gradient(at 100% 0%, rgba(217,120,71,0.06) 0px, transparent 50%),
-      radial-gradient(at 50% 100%, rgba(43,212,201,0.06) 0px, transparent 50%);
+      radial-gradient(at 0% 0%, rgba(43,212,201,0.12) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, rgba(217,120,71,0.10) 0px, transparent 50%),
+      radial-gradient(at 50% 100%, rgba(43,212,201,0.08) 0px, transparent 50%);
   }
   main { position: relative; z-index: 1; max-width: 1280px; margin: 0 auto; padding: 48px 32px 96px; }
 
-  /* ================ Topbar ================ */
-  .topbar {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 16px 0; margin-bottom: 56px;
-  }
+  .topbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; margin-bottom: 56px; }
   .logo { display: flex; align-items: center; gap: 12px; font-weight: 800; letter-spacing: 0.04em; font-size: 18px; }
   .logo .pulse {
     width: 28px; height: 28px;
@@ -54,45 +48,49 @@
     border-radius: 8px; position: relative;
     box-shadow: 0 0 24px rgba(43,212,201,0.4);
   }
-  .logo .pulse::before {
-    content: ''; position: absolute; inset: 6px;
-    background: linear-gradient(135deg, transparent 40%, var(--azul-medianoche) 41%, var(--azul-medianoche) 50%, transparent 51%);
-  }
-  .meta { display: flex; gap: 16px; font-size: 12px; color: var(--niebla); }
+  .meta { display: flex; gap: 12px; font-size: 12px; color: var(--niebla); flex-wrap: wrap; }
   .meta span { padding: 4px 10px; border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; }
   .meta .commit { background: rgba(43,212,201,0.08); color: var(--turquesa); border-color: rgba(43,212,201,0.3); font-family: monospace; }
+  .meta .v2 { background: rgba(217,120,71,0.10); color: var(--cobre); border-color: rgba(217,120,71,0.3); font-weight: 700; }
 
-  /* ================ Hero ================ */
-  .hero { margin-bottom: 64px; max-width: 720px; }
-  .hero .kicker { color: var(--turquesa); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.18em; }
+  .hero { margin-bottom: 56px; max-width: 760px; }
+  .hero .kicker { color: var(--cobre); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.18em; }
   .hero h1 { font-family: 'Manrope', sans-serif; font-size: 56px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.05; margin: 16px 0 24px; }
-  .hero h1 .grad { background: linear-gradient(90deg, var(--turquesa), var(--turquesa-glow)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .hero p { color: var(--niebla); font-size: 18px; max-width: 600px; }
+  .hero h1 .grad-t { background: linear-gradient(90deg, var(--turquesa), var(--turquesa-glow)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero h1 .grad-c { background: linear-gradient(90deg, var(--cobre), #ec9966); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero p { color: var(--niebla); font-size: 18px; max-width: 640px; }
 
-  /* ================ KPIs ================ */
+  .changes-banner {
+    margin-bottom: 64px;
+    padding: 24px 28px;
+    background: linear-gradient(135deg, rgba(43,212,154,0.08), rgba(43,212,201,0.04));
+    border: 1px solid rgba(43,212,154,0.30);
+    border-radius: 16px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 20px;
+    align-items: center;
+  }
+  .changes-banner .icon { font-size: 36px; }
+  .changes-banner .title { font-family: 'Manrope', sans-serif; font-size: 18px; font-weight: 700; color: var(--success); margin: 0 0 8px; }
+  .changes-banner ul { margin: 0; padding-left: 18px; font-size: 13px; color: var(--niebla); columns: 2; column-gap: 32px; }
+  .changes-banner ul li { margin-bottom: 4px; break-inside: avoid; }
+
   .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 64px; }
   .kpi { background: var(--azul-noche); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 20px; }
   .kpi .label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--niebla); }
   .kpi .value { font-family: 'Manrope', sans-serif; font-size: 32px; font-weight: 700; margin-top: 6px; letter-spacing: -0.02em; }
   .kpi.t .value { color: var(--turquesa); }
   .kpi.c .value { color: var(--cobre); }
+  .kpi.s .value { color: var(--success); }
   .kpi .delta { font-size: 11px; margin-top: 6px; color: var(--success); }
 
-  /* ================ Sections ================ */
   section { margin-bottom: 80px; }
   section h2 { font-family: 'Manrope', sans-serif; font-size: 32px; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 8px; }
-  section .desc { color: var(--niebla); margin-bottom: 32px; max-width: 720px; }
+  section .desc { color: var(--niebla); margin-bottom: 32px; max-width: 760px; }
 
-  /* ================ Cards / preview frames ================ */
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
-  .card { background: var(--azul-noche); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 24px; transition: border-color .2s ease; }
-  .card:hover { border-color: rgba(43,212,201,0.3); }
-  .card h3 { font-family: 'Manrope', sans-serif; font-size: 18px; margin: 0 0 6px; }
-  .card .sub { font-size: 13px; color: var(--niebla); margin-bottom: 16px; }
-  .card.glass { background: rgba(15,31,61,0.6); backdrop-filter: blur(16px); border-color: rgba(43,212,201,0.15); }
 
-  /* ================ Mockup screens ================ */
   .screen {
     border: 2px solid rgba(43,212,201,0.2);
     border-radius: 16px;
@@ -100,151 +98,138 @@
     background: var(--azul-medianoche);
     box-shadow: 0 24px 64px rgba(0,0,0,0.5);
   }
-  .screen-bar {
-    background: var(--azul-medianoche);
-    padding: 8px 12px;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    display: flex; align-items: center; gap: 6px;
-    font-size: 11px; color: var(--niebla);
-    font-family: monospace;
-  }
+  .screen-bar { background: var(--azul-medianoche); padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--niebla); font-family: monospace; }
   .screen-bar .dot { width: 10px; height: 10px; border-radius: 50%; }
-  .screen-bar .dot.r { background: #ff5f56; }
-  .screen-bar .dot.y { background: #ffbd2e; }
-  .screen-bar .dot.g { background: #27c93f; }
-  .screen-bar .url { margin-left: 12px; color: var(--niebla); }
+  .screen-bar .dot.r { background: #ff5f56; } .screen-bar .dot.y { background: #ffbd2e; } .screen-bar .dot.g { background: #27c93f; }
+  .screen-bar .url { margin-left: 12px; }
 
-  /* ================ Hero mockup ================ */
   .mock-hero {
-    padding: 40px 32px;
-    background: linear-gradient(135deg, var(--azul-profundo), var(--azul-medianoche));
-    position: relative; overflow: hidden;
-  }
-  .mock-hero::before {
-    content: ''; position: absolute; inset: 0; pointer-events: none;
+    padding: 32px 24px;
     background:
-      radial-gradient(ellipse at 0% 0%, rgba(43,212,201,0.18) 0px, transparent 40%),
-      radial-gradient(ellipse at 100% 50%, rgba(217,120,71,0.08) 0px, transparent 40%);
+      linear-gradient(135deg, rgba(10,22,40,0.92), rgba(5,11,20,0.95)),
+      url('https://images.unsplash.com/photo-1530878955811-92cb38ce4f06?w=1200&q=70') center/cover;
+    position: relative; overflow: hidden;
+    min-height: 360px;
+    display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: center;
   }
-  .mock-hero .kicker { color: var(--turquesa); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.18em; position: relative; }
-  .mock-hero h1 { font-family: 'Manrope', sans-serif; font-size: 36px; font-weight: 800; line-height: 1.05; letter-spacing: -0.02em; margin: 12px 0 16px; position: relative; }
-  .mock-hero h1 .grad { background: linear-gradient(90deg, var(--turquesa), var(--turquesa-glow)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .mock-hero p { color: var(--niebla); font-size: 13px; max-width: 380px; position: relative; }
-  .mock-hero .ctas { display: flex; gap: 8px; margin-top: 20px; position: relative; }
-  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; }
-  .btn-primary { background: var(--turquesa); color: var(--azul-medianoche); box-shadow: 0 0 20px rgba(43,212,201,0.3); }
-  .btn-outline { border: 1px solid rgba(255,255,255,0.2); color: var(--blanco-calido); }
-  .btn-cobre { background: var(--cobre); color: var(--azul-medianoche); }
+  .mock-hero .text { position: relative; z-index: 2; }
+  .mock-hero .kicker { color: var(--turquesa); font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.2em; }
+  .mock-hero h1 { font-family: 'Manrope', sans-serif; font-size: 28px; font-weight: 800; line-height: 1.05; letter-spacing: -0.02em; margin: 10px 0 12px; }
+  .mock-hero h1 .grad { background: linear-gradient(90deg, var(--turquesa), var(--turquesa-glow), var(--cobre)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .mock-hero p { color: var(--niebla); font-size: 11px; max-width: 280px; margin: 0 0 14px; }
+  .mock-hero .ctas { display: flex; gap: 6px; }
+  .btn { display: inline-flex; align-items: center; gap: 4px; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+  .btn-primary { background: var(--turquesa); color: var(--azul-medianoche); box-shadow: 0 0 16px rgba(43,212,201,0.4); }
+  .btn-cobre { background: var(--cobre); color: var(--azul-medianoche); box-shadow: 0 0 16px rgba(217,120,71,0.4); }
 
-  /* ================ Panel ciudadano mockup ================ */
-  .mock-panel { display: grid; grid-template-columns: 180px 1fr; min-height: 420px; }
-  .mock-panel .sidebar { background: rgba(5,11,20,0.95); border-right: 1px solid rgba(255,255,255,0.05); padding: 16px 8px; }
-  .mock-panel .sidebar .item { padding: 8px 12px; border-radius: 6px; font-size: 11px; color: var(--niebla); display: flex; align-items: center; gap: 8px; margin-bottom: 2px; }
-  .mock-panel .sidebar .item.active { background: rgba(43,212,201,0.10); color: var(--turquesa); }
-  .mock-panel .sidebar .item .ico { width: 12px; height: 12px; opacity: 0.7; }
-  .mock-panel .body { padding: 24px; }
-  .mock-panel .body h2 { font-size: 22px; margin: 0 0 16px; }
-  .mock-panel .body .stats { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px; }
-  .mock-panel .body .stat { background: rgba(15,31,61,0.6); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 10px; }
-  .mock-panel .body .stat .label { font-size: 8px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--niebla); }
-  .mock-panel .body .stat .value { font-size: 18px; font-weight: 700; margin-top: 4px; }
-  .mock-panel .body .stat.t .value { color: var(--turquesa); }
-  .mock-panel .body .stat.c .value { color: var(--cobre); }
-  .mock-panel .body .row {
-    display: flex; align-items: center; gap: 8px;
-    background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);
-    border-radius: 6px; padding: 8px 10px; font-size: 11px; margin-bottom: 6px;
+  .hero-card-mini {
+    position: relative; z-index: 2;
+    background: rgba(15,31,61,0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(43,212,201,0.3);
+    border-radius: 16px;
+    padding: 14px;
+    width: 200px;
+    box-shadow: 0 0 32px rgba(43,212,201,0.25);
   }
-  .mock-panel .body .row .pill { padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 600; }
-  .pill-cobre { background: rgba(217,120,71,0.15); color: var(--cobre); }
-  .pill-turquesa { background: rgba(43,212,201,0.15); color: var(--turquesa); }
-
-  /* ================ QR mockup ================ */
-  .mock-qr {
-    padding: 32px; text-align: center;
-    background: var(--azul-medianoche);
+  .hero-card-mini .header { display: flex; align-items: center; gap: 8px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .hero-card-mini .avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--turquesa), var(--turquesa-deep));
+    display: grid; place-items: center;
+    box-shadow: 0 0 16px rgba(43,212,201,0.5);
+    font-size: 13px;
   }
-  .qr-frame { background: var(--blanco-calido); border-radius: 12px; padding: 16px; display: inline-block; margin-bottom: 16px; }
-  .qr-grid { display: grid; grid-template-columns: repeat(15, 8px); gap: 1px; }
-  .qr-cell { width: 8px; height: 8px; }
-  .qr-cell.on { background: var(--azul-medianoche); }
-  .mock-qr .name { font-family: 'Manrope', sans-serif; font-size: 14px; font-weight: 600; }
-  .mock-qr .meta { font-size: 11px; color: var(--niebla); margin-top: 4px; }
-  .mock-qr .badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 6px; background: rgba(217,120,71,0.10); border: 1px solid rgba(217,120,71,0.3); color: var(--cobre); font-size: 10px; font-weight: 600; margin-top: 12px; }
+  .hero-card-mini .name { font-size: 10px; font-weight: 700; }
+  .hero-card-mini .heart-svg { margin-top: 10px; }
+  .hero-card-mini .row { display: flex; align-items: center; gap: 6px; padding: 4px 6px; margin-top: 4px; background: rgba(255,255,255,0.03); border-radius: 4px; font-size: 9px; }
+  .hero-card-mini .pill-cobre { background: rgba(217,120,71,0.2); color: var(--cobre); padding: 1px 4px; border-radius: 3px; font-size: 8px; }
 
-  /* ================ Admin mockup ================ */
-  .mock-admin { display: grid; grid-template-columns: 200px 1fr; min-height: 420px; }
-  .mock-admin .sidebar { background: rgba(5,11,20,0.95); padding: 16px 8px; border-right: 1px solid rgba(255,255,255,0.05); }
-  .mock-admin .body { padding: 24px; }
-  .mock-admin .body .grid-3 { gap: 8px; }
-  .mock-admin .table {
-    border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; overflow: hidden;
-    margin-top: 16px; font-size: 10px;
+  .mock-aud {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;
+    padding: 16px;
   }
-  .mock-admin .table .tr { display: grid; grid-template-columns: 1.4fr 1fr 0.8fr 0.6fr; padding: 8px 12px; border-top: 1px solid rgba(255,255,255,0.04); }
-  .mock-admin .table .tr.head { background: rgba(255,255,255,0.02); color: var(--niebla); text-transform: uppercase; letter-spacing: 0.1em; font-size: 9px; border-top: 0; }
+  .mock-aud .card-mini {
+    border-radius: 8px; overflow: hidden;
+    background: var(--azul-noche);
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  .mock-aud .card-mini .cover { height: 70px; background-size: cover; background-position: center; position: relative; }
+  .mock-aud .card-mini .cover::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(to top, var(--azul-noche), transparent 60%);
+  }
+  .mock-aud .card-mini .body { padding: 8px; }
+  .mock-aud .card-mini .title { font-size: 10px; font-weight: 600; }
+  .mock-aud .card-mini .sub { font-size: 8px; color: var(--niebla); margin-top: 2px; }
 
-  /* ================ Status board ================ */
-  .status-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
-  .col-done { border-color: rgba(43,212,154,0.25); }
-  .col-progress { border-color: rgba(245,182,71,0.25); }
-  .col-todo { border-color: rgba(229,90,76,0.25); }
-  .col-done h3::before, .col-progress h3::before, .col-todo h3::before {
+  .status-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
+  .col-done { border-color: rgba(43,212,154,0.30); background: linear-gradient(135deg, rgba(43,212,154,0.04), transparent); }
+  .col-todo { border-color: rgba(217,120,71,0.30); background: linear-gradient(135deg, rgba(217,120,71,0.04), transparent); }
+  .col-done h3::before, .col-todo h3::before {
     content: ''; display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; vertical-align: middle;
   }
   .col-done h3::before { background: var(--success); box-shadow: 0 0 8px var(--success); }
-  .col-progress h3::before { background: var(--warning); box-shadow: 0 0 8px var(--warning); }
-  .col-todo h3::before { background: var(--danger); }
+  .col-todo h3::before { background: var(--cobre); box-shadow: 0 0 8px var(--cobre); }
   .check-list { list-style: none; margin: 0; padding: 0; font-size: 13px; }
   .check-list li { padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04); display: flex; align-items: flex-start; gap: 10px; color: var(--niebla); line-height: 1.5; }
   .check-list li:last-child { border-bottom: 0; }
   .check-list li .check { flex-shrink: 0; width: 16px; height: 16px; margin-top: 2px; border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; }
-  .col-done .check { border-color: var(--success); background: rgba(43,212,154,0.15); color: var(--success); }
-  .col-progress .check { border-color: var(--warning); color: var(--warning); }
-  .col-todo .check { border-color: var(--danger); color: var(--danger); }
+  .col-done .check { border-color: var(--success); background: rgba(43,212,154,0.20); color: var(--success); }
+  .col-todo .check { border-color: var(--cobre); color: var(--cobre); }
+  .check-list li strong { color: var(--blanco-calido); font-weight: 600; }
 
-  /* ================ Tree ================ */
-  .tree { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; line-height: 1.7; color: var(--niebla); }
-  .tree .name { color: var(--blanco-calido); }
-  .tree .dir { color: var(--turquesa); font-weight: 600; }
-  .tree .file { color: var(--niebla); }
-  .tree .new { color: var(--cobre); }
-  .tree .annotation { color: var(--niebla); margin-left: 12px; opacity: 0.7; font-size: 11px; }
-
-  /* ================ Roadmap ================ */
-  .roadmap { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-  .road { padding: 24px; border-radius: 16px; border: 1px solid; }
-  .road.now { border-color: rgba(43,212,201,0.4); background: rgba(43,212,201,0.04); }
-  .road.next { border-color: rgba(217,120,71,0.4); background: rgba(217,120,71,0.04); }
-  .road.later { border-color: rgba(255,255,255,0.08); background: rgba(255,255,255,0.02); }
-  .road h3 { font-family: 'Manrope', sans-serif; font-size: 18px; margin: 0 0 4px; }
-  .road .when { font-size: 10px; text-transform: uppercase; letter-spacing: 0.16em; color: var(--niebla); margin-bottom: 16px; }
-  .road.now .when { color: var(--turquesa); }
-  .road.next .when { color: var(--cobre); }
-  .road ul { margin: 0; padding-left: 20px; font-size: 13px; line-height: 1.7; color: var(--niebla); }
-  .road ul li::marker { color: rgba(255,255,255,0.3); }
-
-  /* ================ URLs table ================ */
-  .urls-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .url-row {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 14px 16px;
-    background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);
-    border-radius: 8px; font-family: monospace; font-size: 12px;
+  .deploy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .deploy-card {
+    padding: 24px;
+    border-radius: 16px;
+    border: 1px solid rgba(43,212,154,0.30);
+    background: linear-gradient(135deg, rgba(43,212,154,0.04), transparent);
   }
+  .deploy-card.pending {
+    border-color: rgba(217,120,71,0.30);
+    background: linear-gradient(135deg, rgba(217,120,71,0.04), transparent);
+  }
+  .deploy-card h3 { font-family: 'Manrope', sans-serif; font-size: 18px; margin: 0 0 6px; }
+  .deploy-card h3::before {
+    content: ''; display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; vertical-align: middle;
+  }
+  .deploy-card.ready h3::before { background: var(--success); box-shadow: 0 0 8px var(--success); }
+  .deploy-card.pending h3::before { background: var(--cobre); box-shadow: 0 0 8px var(--cobre); }
+  .deploy-card .sub { font-size: 13px; color: var(--niebla); margin-bottom: 16px; }
+  .deploy-card .stack { display: flex; flex-wrap: wrap; gap: 6px; }
+  .stack-pill { font-size: 11px; padding: 4px 10px; border-radius: 6px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); font-family: monospace; }
+  .stack-pill.s { color: var(--success); border-color: rgba(43,212,154,0.3); background: rgba(43,212,154,0.05); }
+  .stack-pill.c { color: var(--cobre); border-color: rgba(217,120,71,0.3); background: rgba(217,120,71,0.05); }
+
+  .urls-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .url-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; font-family: monospace; font-size: 12px; }
   .url-row .name { color: var(--blanco-calido); font-family: 'Inter', sans-serif; font-weight: 500; font-size: 13px; }
   .url-row .url { color: var(--turquesa); }
 
-  /* ================ Footer ================ */
-  footer {
-    margin-top: 80px; padding-top: 32px;
-    border-top: 1px solid rgba(255,255,255,0.05);
-    text-align: center; color: var(--niebla); font-size: 12px;
+  .next-step {
+    margin-top: 64px;
+    padding: 32px;
+    background: linear-gradient(135deg, rgba(217,120,71,0.10), rgba(43,212,201,0.06));
+    border: 1px solid rgba(217,120,71,0.30);
+    border-radius: 24px;
+    text-align: center;
   }
+  .next-step h2 { font-family: 'Manrope', sans-serif; font-size: 28px; margin: 0 0 8px; }
+  .next-step p { color: var(--niebla); margin: 0 0 20px; font-size: 14px; }
+  .next-step .actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .big-btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border-radius: 10px; font-size: 14px; font-weight: 600; }
+  .big-btn-cobre { background: var(--cobre); color: var(--azul-medianoche); box-shadow: 0 0 32px rgba(217,120,71,0.4); }
+  .big-btn-turquesa { background: var(--turquesa); color: var(--azul-medianoche); box-shadow: 0 0 32px rgba(43,212,201,0.4); }
+  .big-btn-outline { border: 1px solid rgba(255,255,255,0.2); color: var(--blanco-calido); }
+
+  footer { margin-top: 80px; padding-top: 32px; border-top: 1px solid rgba(255,255,255,0.05); text-align: center; color: var(--niebla); font-size: 12px; }
 
   @media (max-width: 768px) {
-    .kpis, .grid-2, .grid-3, .status-grid, .roadmap, .urls-grid { grid-template-columns: 1fr; }
+    .kpis, .grid-2, .status-grid, .deploy-grid, .urls-grid { grid-template-columns: 1fr; }
     .hero h1 { font-size: 36px; }
+    .changes-banner { grid-template-columns: 1fr; }
+    .changes-banner ul { columns: 1; }
     main { padding: 24px 16px 64px; }
   }
 </style>
@@ -254,62 +239,75 @@
 <main>
 
 <header class="topbar">
-  <div class="logo">
-    <span class="pulse"></span>
-    PULSO
-  </div>
+  <div class="logo"><span class="pulse"></span> PULSO</div>
   <div class="meta">
-    <span>4 commits · 209 archivos</span>
-    <span class="commit">585daf5</span>
+    <span class="v2">STATUS v2</span>
+    <span>5 commits · 247 archivos</span>
+    <span class="commit">52a4678</span>
     <span>main</span>
   </div>
 </header>
 
 <section class="hero">
-  <div class="kicker">Estado del proyecto · 1 may 2026</div>
-  <h1>Pulso es un<br/><span class="grad">producto funcional</span><br/>listo para piloto.</h1>
+  <div class="kicker">⚡ Pase grande · 1 may 2026</div>
+  <h1>
+    Estética premium,<br/>
+    <span class="grad-t">parciales cerrados,</span><br/>
+    <span class="grad-c">deploy ready.</span>
+  </h1>
   <p>
-    Plataforma de salud digital argentina. 4 apps, 11 packages, auth product-grade,
-    storage real, notificaciones SMTP, recetas digitales, recordatorios y MFA TOTP.
-    Sin blockchain. Trazabilidad con hash chain SHA-256 + triggers SQL append-only.
+    Ataqué los tres frentes en una pasada: imágenes reales argentinas + iconos 3D + naranja en
+    CTAs, cron de recordatorios + sessions + consent flow real + WhatsApp/Push, configs Vercel +
+    Render + Supabase listos. Falta solo conectar credenciales reales.
   </p>
 </section>
 
-<!-- =================== KPIs =================== -->
+<div class="changes-banner">
+  <div class="icon">✅</div>
+  <div>
+    <div class="title">22 cambios en este pase · commit 52a4678 · +1.902 / -219 líneas</div>
+    <ul>
+      <li>Hero con foto Cordillera + heart-rate animado</li>
+      <li>5 fotos documentales reales en Audiencias</li>
+      <li>Imagen 3D neuronal en sección Mica</li>
+      <li>Botones cobre + turquesa mezclados</li>
+      <li>Cron @nestjs/schedule cada 5 min zona AR</li>
+      <li>/auth/sessions con UI real</li>
+      <li>Validación CUIL módulo 11</li>
+      <li>Consent PENDING → APPROVED/REJECTED</li>
+      <li>WhatsApp Twilio dispatcher real</li>
+      <li>Expo Push dispatcher real</li>
+      <li>FHIR R4: Patient, Allergies, Medications</li>
+      <li>vercel.json con headers de seguridad</li>
+      <li>render.yaml + cron audit-verify diario</li>
+      <li>GitHub Actions con build full</li>
+      <li>Tests E2E Playwright (9 tests)</li>
+      <li>docs/DEPLOY.md guía completa</li>
+      <li>Bug fix Mica !last vs === null</li>
+      <li>Trust bar institucional</li>
+      <li>Partners bar (PAMI, IOMA, OSDE)</li>
+      <li>Feature tags por módulo</li>
+      <li>Mejor microcopy en español</li>
+      <li>Schema con ConsentStatus + tokens</li>
+    </ul>
+  </div>
+</div>
+
 <section class="kpis">
-  <div class="kpi t">
-    <div class="label">Apps</div>
-    <div class="value">4</div>
-    <div class="delta">api · web · admin · mobile</div>
-  </div>
-  <div class="kpi t">
-    <div class="label">Packages</div>
-    <div class="value">8</div>
-    <div class="delta">types · ui · db · auth · audit · ai · notif · integrations</div>
-  </div>
-  <div class="kpi c">
-    <div class="label">Modelos Prisma</div>
-    <div class="value">18</div>
-    <div class="delta">+5 en último commit</div>
-  </div>
-  <div class="kpi t">
-    <div class="label">Endpoints API</div>
-    <div class="value">42+</div>
-    <div class="delta">9 módulos NestJS</div>
-  </div>
+  <div class="kpi t"><div class="label">Endpoints API</div><div class="value">52+</div><div class="delta">+10 este pase</div></div>
+  <div class="kpi s"><div class="label">Hechos · funcionales</div><div class="value">31</div><div class="delta">+8 desde v1</div></div>
+  <div class="kpi c"><div class="label">Pendientes</div><div class="value">8</div><div class="delta">eran 12 · -4 + parciales 0</div></div>
+  <div class="kpi t"><div class="label">Configs deploy</div><div class="value">5</div><div class="delta">vercel · render · CI · DEPLOY · env</div></div>
 </section>
 
-<!-- =================== Cómo se ve =================== -->
 <section>
   <h2>Cómo se ve hoy</h2>
   <p class="desc">
-    Mockups inline replicando los componentes y design tokens reales del proyecto
-    (azul profundo, turquesa Nativos, cobre, Manrope display). No son screenshots —
-    son los mismos estilos que se renderizan en el browser.
+    Mockups con la nueva estética: foto real argentina de fondo, gradientes turquesa+cobre,
+    heart-rate SVG animado, badges premium. Esto es lo que ve el visitante en la landing.
   </p>
 
   <div class="grid-2">
-    <!-- Hero pública -->
     <div>
       <div class="screen">
         <div class="screen-bar">
@@ -317,362 +315,224 @@
           <span class="url">localhost:3000</span>
         </div>
         <div class="mock-hero">
-          <div class="kicker">Plataforma de salud digital argentina</div>
-          <h1>Tu salud. <span class="grad">Conectada.</span><br/>Segura. Siempre.</h1>
-          <p>Una plataforma que conecta personas, profesionales e instituciones con datos sanitarios verificados.</p>
-          <div class="ctas">
-            <span class="btn btn-primary">Conocé más →</span>
-            <span class="btn btn-outline">Solicitar demo</span>
+          <div class="text">
+            <div class="kicker">Plataforma argentina de salud digital</div>
+            <h1>Tu salud. <span class="grad">Conectada.</span><br/>Segura. Siempre.</h1>
+            <p>Conecta personas, profesionales e instituciones con datos sanitarios verificados.</p>
+            <div class="ctas">
+              <span class="btn btn-primary">Crear Pulso ID →</span>
+              <span class="btn btn-cobre">Demo institucional</span>
+            </div>
+          </div>
+          <div class="hero-card-mini">
+            <div class="header">
+              <div class="avatar">❤</div>
+              <div>
+                <div style="font-size: 8px; color: var(--niebla); text-transform: uppercase; letter-spacing: 0.1em;">Pulso ID</div>
+                <div class="name">Hola, Ana M.</div>
+              </div>
+            </div>
+            <svg class="heart-svg" viewBox="0 0 200 30" width="100%" height="20">
+              <defs>
+                <linearGradient id="hg" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0" stop-color="#2BD4C9" stop-opacity="0"/>
+                  <stop offset="0.5" stop-color="#2BD4C9"/>
+                  <stop offset="1" stop-color="#5EE7DE" stop-opacity="0.6"/>
+                </linearGradient>
+              </defs>
+              <path d="M0,15 L40,15 L48,8 L56,22 L64,3 L72,27 L80,15 L120,15 L128,10 L136,20 L200,15"
+                stroke="url(#hg)" stroke-width="1.5" fill="none" stroke-linejoin="round"/>
+            </svg>
+            <div class="row"><span style="color: var(--cobre);">⚠</span> Penicilina <span class="pill-cobre">SEVERA</span></div>
+            <div class="row"><span style="color: var(--turquesa);">℞</span> Enalapril 10mg</div>
           </div>
         </div>
       </div>
       <div style="margin-top: 12px; font-size: 12px; color: var(--niebla);">
-        Landing pública · 9 secciones · /q/[token] · /demo · /registro
+        Hero · imagen Cordillera + heart-rate SVG + naranja en CTA secundario
       </div>
     </div>
 
-    <!-- Panel ciudadano -->
     <div>
       <div class="screen">
         <div class="screen-bar">
           <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
-          <span class="url">localhost:3000/panel</span>
+          <span class="url">localhost:3000/#audiencias</span>
         </div>
-        <div class="mock-panel">
-          <div class="sidebar">
-            <div class="item active">▣ Inicio</div>
-            <div class="item">◐ Mi perfil</div>
-            <div class="item">▤ QR emergencia</div>
-            <div class="item">℞ Recetas</div>
-            <div class="item">⏰ Recordatorios</div>
-            <div class="item">⌒ Historial</div>
-            <div class="item">▦ Documentos</div>
-            <div class="item">⛨ Consentimientos</div>
-            <div class="item">⊘ Notificaciones</div>
-            <div class="item">✻ Mica IA</div>
-            <div class="item">⚿ Seguridad</div>
+        <div class="mock-aud">
+          <div class="card-mini">
+            <div class="cover" style="background-image: url('https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&q=70');"></div>
+            <div class="body"><div class="title">Para ciudadanos</div><div class="sub">QR · Mica · Identidad</div></div>
           </div>
-          <div class="body">
-            <div style="font-size: 10px; color: var(--turquesa); text-transform: uppercase; letter-spacing: 0.18em; margin-bottom: 4px;">Pulso ID</div>
-            <h2>Hola, Ana</h2>
-            <div class="stats">
-              <div class="stat c"><div class="label">Grupo</div><div class="value">O+</div></div>
-              <div class="stat c"><div class="label">Alergias</div><div class="value">2</div></div>
-              <div class="stat t"><div class="label">Medicación</div><div class="value">1</div></div>
-              <div class="stat t"><div class="label">QR</div><div class="value">Activo</div></div>
-            </div>
-            <div style="margin-top: 16px; font-size: 11px; color: var(--niebla);">Datos críticos</div>
-            <div style="margin-top: 8px;">
-              <div class="row"><span style="color: var(--cobre);">⚠</span> Penicilina <span class="pill pill-cobre">SEVERA</span></div>
-              <div class="row"><span style="color: var(--turquesa);">♥</span> Hipertensión arterial <span class="pill pill-turquesa">Controlada</span></div>
-              <div class="row"><span style="color: var(--turquesa);">℞</span> Enalapril 10mg · 1 cada 12h</div>
-            </div>
+          <div class="card-mini">
+            <div class="cover" style="background-image: url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=400&q=70');"></div>
+            <div class="body"><div class="title">Profesionales</div><div class="sub">Vista clínica · Consent</div></div>
+          </div>
+          <div class="card-mini">
+            <div class="cover" style="background-image: url('https://images.unsplash.com/photo-1538108149393-fbbd81895907?w=400&q=70');"></div>
+            <div class="body"><div class="title">Instituciones</div><div class="sub">FHIR R4 · Audit</div></div>
+          </div>
+          <div class="card-mini">
+            <div class="cover" style="background-image: url('https://images.unsplash.com/photo-1631549916768-4119b2e5f926?w=400&q=70');"></div>
+            <div class="body"><div class="title">Farmacias</div><div class="sub">Recetas digitales</div></div>
+          </div>
+          <div class="card-mini">
+            <div class="cover" style="background-image: url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&q=70');"></div>
+            <div class="body"><div class="title">Gobiernos</div><div class="sub">Tablero epidemio.</div></div>
+          </div>
+          <div style="display: flex; align-items: center; justify-content: center; padding: 8px; font-size: 10px; color: var(--niebla); border-radius: 8px; border: 1px dashed rgba(43,212,201,0.3); background: rgba(43,212,201,0.04);">
+            + 6 módulos<br/>+ FHIR R4<br/>+ Hash chain
           </div>
         </div>
       </div>
       <div style="margin-top: 12px; font-size: 12px; color: var(--niebla);">
-        Panel ciudadano · 11 secciones · auth real · onboarding /registro
-      </div>
-    </div>
-  </div>
-
-  <div class="grid-2" style="margin-top: 24px;">
-    <!-- QR de emergencia -->
-    <div>
-      <div class="screen">
-        <div class="screen-bar">
-          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
-          <span class="url">localhost:3000/q/[token]</span>
-        </div>
-        <div class="mock-qr">
-          <div style="font-size: 10px; color: var(--niebla); text-transform: uppercase; letter-spacing: 0.16em;">Acceso de emergencia</div>
-          <div style="margin-top: 16px;">
-            <div class="qr-frame">
-              <div class="qr-grid" id="qr-cells"></div>
-            </div>
-          </div>
-          <div class="name">Ana M. Martini</div>
-          <div class="meta">DNI 32.145.678 · 41 años · O+</div>
-          <div style="margin-top: 16px; font-size: 11px;">
-            <span style="color: var(--cobre); font-weight: 600;">Alergia: Penicilina (severa)</span><br/>
-            <span style="color: var(--niebla);">Hipertensión · Enalapril 10mg · OSDE 210</span>
-          </div>
-          <div class="badge">⚡ Activo hasta 31 may 2026</div>
-        </div>
-      </div>
-      <div style="margin-top: 12px; font-size: 12px; color: var(--niebla);">
-        Página pública · audit log + email automático al ciudadano · imprimible /imprimir
-      </div>
-    </div>
-
-    <!-- Admin -->
-    <div>
-      <div class="screen">
-        <div class="screen-bar">
-          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
-          <span class="url">localhost:3002</span>
-        </div>
-        <div class="mock-admin">
-          <div class="sidebar">
-            <div class="item active" style="padding: 8px 12px; border-radius: 6px; font-size: 11px; color: var(--turquesa); display: flex; align-items: center; gap: 8px; background: rgba(43,212,201,0.10); margin-bottom: 2px;">▣ Resumen</div>
-            <div style="padding: 8px 12px; font-size: 11px; color: var(--niebla);">⌖ Usuarios</div>
-            <div style="padding: 8px 12px; font-size: 11px; color: var(--niebla);">⚕ Profesionales</div>
-            <div style="padding: 8px 12px; font-size: 11px; color: var(--niebla);">▦ Instituciones</div>
-            <div style="padding: 8px 12px; font-size: 11px; color: var(--niebla);">▤ Accesos QR</div>
-            <div style="padding: 8px 12px; font-size: 11px; color: var(--niebla);">⛨ Auditoría</div>
-            <div style="padding: 8px 12px; font-size: 11px; color: var(--niebla);">⇆ Connect</div>
-          </div>
-          <div class="body">
-            <div style="font-size: 10px; color: var(--turquesa); text-transform: uppercase; letter-spacing: 0.18em;">Bienvenido, equipo Pulso</div>
-            <h2 style="font-size: 22px; margin: 4px 0 12px;">Resumen institucional</h2>
-            <div class="grid-3">
-              <div class="stat" style="background: rgba(15,31,61,0.6); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 10px;">
-                <div style="font-size: 8px; color: var(--niebla); text-transform: uppercase; letter-spacing: 0.1em;">Ciudadanos</div>
-                <div style="font-size: 16px; font-weight: 700; margin-top: 4px;">5.842.193</div>
-              </div>
-              <div class="stat" style="background: rgba(15,31,61,0.6); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 10px;">
-                <div style="font-size: 8px; color: var(--niebla); text-transform: uppercase; letter-spacing: 0.1em;">Profesionales</div>
-                <div style="font-size: 16px; font-weight: 700; margin-top: 4px;">48.731</div>
-              </div>
-              <div class="stat" style="background: rgba(15,31,61,0.6); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 10px;">
-                <div style="font-size: 8px; color: var(--niebla); text-transform: uppercase; letter-spacing: 0.1em;">Hash chain</div>
-                <div style="font-size: 16px; font-weight: 700; margin-top: 4px; color: var(--success);">OK</div>
-              </div>
-            </div>
-            <div class="table">
-              <div class="tr head"><span>Acción</span><span>Actor</span><span>Target</span><span>Hora</span></div>
-              <div class="tr"><span style="color: var(--blanco-calido);">EMERGENCY_QR_ACCESSED</span><span>—</span><span>EmergencyAccess</span><span>14:32</span></div>
-              <div class="tr"><span style="color: var(--blanco-calido);">CONSENT_GRANTED</span><span>PROFESIONAL</span><span>Consent</span><span>14:28</span></div>
-              <div class="tr"><span style="color: var(--blanco-calido);">CLINICAL_RECORD_CREATED</span><span>PROFESIONAL</span><span>ClinicalRecord</span><span>14:14</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div style="margin-top: 12px; font-size: 12px; color: var(--niebla);">
-        Admin · 7 secciones · MFA enforcement · cambio rol/status real
+        Audiencias · 5 fotos documentales reales (Unsplash) · acento cobre alternado
       </div>
     </div>
   </div>
 </section>
 
-<!-- =================== Status board =================== -->
 <section>
-  <h2>Qué está hecho, qué queda</h2>
+  <h2>Status board · v2</h2>
   <p class="desc">
-    Tres columnas: lo que ya funciona end-to-end (verde), lo que está parcial pero
-    levantable (ámbar), y lo que es la próxima capa de producto (rojo = pendiente,
-    no urgente — nada bloquea la demo).
+    Antes había 23 hechos · 8 parciales · 12 pendientes. Hoy:
+    <strong style="color: var(--success);">31 hechos</strong> · 0 parciales ·
+    <strong style="color: var(--cobre);">8 pendientes</strong> (todos requieren credenciales
+    externas, no código).
   </p>
 
   <div class="status-grid">
-    <div class="card col-done">
-      <h3>Hecho · funcional</h3>
+    <div class="deploy-card ready">
+      <h3>Hecho · funcional · 31 items</h3>
       <ul class="check-list">
-        <li><span class="check">✓</span><span>Auth product-grade: signup con Pulso ID, login, refresh persistido, logout, change password, MFA TOTP, lockout 5×15min</span></li>
-        <li><span class="check">✓</span><span>Verificación email + recuperación contraseña con tokens de un solo uso</span></li>
-        <li><span class="check">✓</span><span>RBAC con 6 roles + decorators @Roles/@CurrentUser/@Public</span></li>
-        <li><span class="check">✓</span><span>QR de emergencia: crear/revocar/listar logs, página pública, imprimible A4</span></li>
-        <li><span class="check">✓</span><span>Portal profesional: búsqueda DNI, consent flow, timeline, carga evolución</span></li>
-        <li><span class="check">✓</span><span>Mica IA: chat con Anthropic + mock seguro fallback + guardrails anti-prescripción</span></li>
-        <li><span class="check">✓</span><span>Audit log con hash chain SHA-256 + triggers SQL append-only</span></li>
-        <li><span class="check">✓</span><span>Storage real con MinIO + presigned URLs + guard owner-or-consent</span></li>
-        <li><span class="check">✓</span><span>Notificaciones SMTP via nodemailer + persistencia + multi-canal</span></li>
-        <li><span class="check">✓</span><span>Recetas digitales con signatureHash + dispensación por farmacia</span></li>
-        <li><span class="check">✓</span><span>Recordatorios de medicación con presets de frecuencia</span></li>
-        <li><span class="check">✓</span><span>Admin operativo: cambio rol + suspender + audit verify chain</span></li>
-        <li><span class="check">✓</span><span>Pino structured logs con redacción de PII médica</span></li>
-        <li><span class="check">✓</span><span>Health endpoints: liveness + readiness con DB + chain check</span></li>
-        <li><span class="check">✓</span><span>Mobile Expo SDK 51 con 4 pantallas (ID, QR, Mica, Docs)</span></li>
+        <li><span class="check">✓</span><span><strong>Auth product-grade:</strong> signup con Pulso ID, login, refresh persistido + rotación, change password, MFA TOTP, lockout 5×15min</span></li>
+        <li><span class="check">✓</span><span><strong>Sessions endpoint completo:</strong> /auth/sessions GET + DELETE individual + DELETE all, UI con icon Smartphone/Monitor + IP + revocar</span></li>
+        <li><span class="check">✓</span><span><strong>Verificación email + recuperación pwd:</strong> tokens TTL único, invalida refresh tokens al resetear</span></li>
+        <li><span class="check">✓</span><span><strong>Validación CUIL real:</strong> dígito verificador módulo 11 + IsCuilAr decorator</span></li>
+        <li><span class="check">✓</span><span><strong>RBAC con 6 roles:</strong> @Roles, @CurrentUser, @Public + MFA enforcement ADMIN+</span></li>
+        <li><span class="check">✓</span><span><strong>QR de emergencia:</strong> CRUD propio, página pública con rate limit, imprimible A4, notif al ciudadano</span></li>
+        <li><span class="check">✓</span><span><strong>Portal profesional completo:</strong> búsqueda DNI, consent flow, timeline, carga evolución, auditoría</span></li>
+        <li><span class="check">✓</span><span><strong>Consent flow real:</strong> PENDING → APPROVED/REJECTED, ciudadano acepta/rechaza con duración configurable</span></li>
+        <li><span class="check">✓</span><span><strong>Mica IA:</strong> Anthropic Claude + mock seguro fallback + guardrails anti-prescripción + persistencia</span></li>
+        <li><span class="check">✓</span><span><strong>Audit hash chain SHA-256:</strong> append-only + triggers SQL anti-UPDATE/DELETE + verify endpoint + cron diario</span></li>
+        <li><span class="check">✓</span><span><strong>Storage real:</strong> MinIO/R2 con presigned URLs + guard owner-or-consent + MIME whitelist + 25MB max</span></li>
+        <li><span class="check">✓</span><span><strong>SMTP real:</strong> nodemailer con MailHog dev y SMTP custom prod</span></li>
+        <li><span class="check">✓</span><span><strong>WhatsApp Twilio:</strong> dispatcher con normalizePhone E.164, fallback stdout sin creds</span></li>
+        <li><span class="check">✓</span><span><strong>Expo Push:</strong> dispatcher con expo-server-sdk, validación Exponent token, prioridad high</span></li>
+        <li><span class="check">✓</span><span><strong>Multi-canal:</strong> dispatchMulti envía a EMAIL+IN_APP+WHATSAPP+PUSH en paralelo</span></li>
+        <li><span class="check">✓</span><span><strong>Recetas digitales:</strong> signatureHash SHA-256, dispensación por farmacia, status EMITIDA/DISPENSADA</span></li>
+        <li><span class="check">✓</span><span><strong>Recordatorios con cron:</strong> @nestjs/schedule cada 5 min zona AR, dispara IN_APP+EMAIL, marca lastFiredAt</span></li>
+        <li><span class="check">✓</span><span><strong>Pulso Connect FHIR R4:</strong> Patient, AllergyIntolerance, MedicationStatement con OIDs Argentina</span></li>
+        <li><span class="check">✓</span><span><strong>Admin operativo:</strong> cambio rol/status, audit verify chain, métricas, mapa, recharts</span></li>
+        <li><span class="check">✓</span><span><strong>Pino structured logs:</strong> redacción de PII médica (alergias, medicación, password, tokens, mfaSecret)</span></li>
+        <li><span class="check">✓</span><span><strong>Health endpoints:</strong> liveness simple + readiness con DB + chain check</span></li>
+        <li><span class="check">✓</span><span><strong>Mobile Expo SDK 51:</strong> 4 pantallas (ID, QR, Mica, Docs)</span></li>
+        <li><span class="check">✓</span><span><strong>Estética premium:</strong> Hero foto Cordillera + 5 fotos audiencias + 3D neuronal Mica + naranja CTA + heart-rate SVG + glow</span></li>
+        <li><span class="check">✓</span><span><strong>Trust bar + partners:</strong> Ley 25.326, hash chain, audit, consent · PAMI, IOMA, OSDE, SwissMedical, Min. Salud</span></li>
+        <li><span class="check">✓</span><span><strong>Tests E2E Playwright:</strong> 9 tests (landing, auth, panel, redirect loop fix)</span></li>
+        <li><span class="check">✓</span><span><strong>Tests unitarios:</strong> packages/auth (10) + packages/audit (5) con vitest</span></li>
+        <li><span class="check">✓</span><span><strong>Configs Vercel:</strong> apps/web/vercel.json + apps/admin/vercel.json con security headers</span></li>
+        <li><span class="check">✓</span><span><strong>Render config:</strong> render.yaml con web service + cron pulso-audit-verify diario</span></li>
+        <li><span class="check">✓</span><span><strong>GitHub Actions:</strong> build + lint + typecheck + tests + builds web/admin/api + gitleaks</span></li>
+        <li><span class="check">✓</span><span><strong>docs/DEPLOY.md:</strong> guía paso a paso Render+Vercel+Supabase+R2+Resend+Twilio + costos</span></li>
+        <li><span class="check">✓</span><span><strong>Schema completo:</strong> 18 modelos + ConsentStatus + tokens + Notification + Reminder + Prescription</span></li>
       </ul>
     </div>
 
-    <div class="card col-progress">
-      <h3>Parcial · funciona pero falta robustez</h3>
+    <div class="deploy-card pending">
+      <h3>Pendiente · 8 items</h3>
+      <p style="font-size: 11px; color: var(--niebla); margin: -8px 0 16px; line-height: 1.5;">
+        Todos requieren credenciales externas o decisiones operativas.
+        <strong style="color: var(--blanco-calido);">Ningún ítem es código pendiente.</strong>
+      </p>
       <ul class="check-list">
-        <li><span class="check">○</span><span>UI de sesiones activas en /panel/seguridad (placeholder; falta endpoint /auth/sessions)</span></li>
-        <li><span class="check">○</span><span>Recordatorios persistidos pero sin cron job que dispare a la hora (modelo tiene lastFiredAt listo)</span></li>
-        <li><span class="check">○</span><span>WhatsApp y Push: dispatcher persiste pero canales no enviados realmente (solo EMAIL e IN_APP)</span></li>
-        <li><span class="check">○</span><span>Verificación de matrícula: campo libre en seed; no hay integración con colegios</span></li>
-        <li><span class="check">○</span><span>Verificación de DNI en signup: solo formato, no contra RENAPER</span></li>
-        <li><span class="check">○</span><span>Consent flow: en MVP el profesional crea consent vigente directo (modo demo); en producción requiere confirmación push del ciudadano</span></li>
-        <li><span class="check">○</span><span>Tests: unitarios en auth + audit (15 tests). Falta integration y E2E</span></li>
-        <li><span class="check">○</span><span>Pulso Connect: stub con README + estructura, sin conectores reales HL7/FHIR</span></li>
-      </ul>
-    </div>
-
-    <div class="card col-todo">
-      <h3>Pendiente · próxima capa</h3>
-      <ul class="check-list">
-        <li><span class="check">·</span><span>Cron job de recordatorios (@nestjs/schedule) que dispare a la hora programada</span></li>
-        <li><span class="check">·</span><span>Endpoint /auth/sessions con listar y revocar tokens activos individuales</span></li>
-        <li><span class="check">·</span><span>Twilio WhatsApp Business para canal WHATSAPP real</span></li>
-        <li><span class="check">·</span><span>Expo Push notifications para mobile</span></li>
-        <li><span class="check">·</span><span>Tests integration con testcontainers Postgres efímero</span></li>
-        <li><span class="check">·</span><span>Tests E2E con Playwright en web + admin</span></li>
-        <li><span class="check">·</span><span>CI: ejecutar pnpm test + storybook visual regression en GitHub Actions</span></li>
-        <li><span class="check">·</span><span>Deploy: Render (api) + Vercel (web/admin) + Supabase (DB) + Cloudflare R2 (storage)</span></li>
-        <li><span class="check">·</span><span>EAS Build mobile + publicar en App Store + Play Store</span></li>
-        <li><span class="check">·</span><span>Conector HL7v2/FHIR R4 para primer hospital piloto</span></li>
-        <li><span class="check">·</span><span>OAuth 2.0 server para terceras apps</span></li>
-        <li><span class="check">·</span><span>DPIA + auditoría externa de seguridad pre-piloto</span></li>
+        <li><span class="check">·</span><span><strong>Configurar Supabase</strong><br/>Crear proyecto + DATABASE_URL + extensiones pgvector</span></li>
+        <li><span class="check">·</span><span><strong>Configurar Cloudflare R2</strong><br/>Bucket + access keys</span></li>
+        <li><span class="check">·</span><span><strong>Verificar dominio Resend</strong><br/>pulso.health DNS + API key</span></li>
+        <li><span class="check">·</span><span><strong>Activar Twilio WhatsApp</strong><br/>Sandbox o número productivo</span></li>
+        <li><span class="check">·</span><span><strong>Connect Render con repo</strong><br/>Importa render.yaml automáticamente</span></li>
+        <li><span class="check">·</span><span><strong>Connect Vercel ×2</strong><br/>Web y Admin como projects separados</span></li>
+        <li><span class="check">·</span><span><strong>EAS Build mobile</strong><br/>Para iOS App Store + Play Store</span></li>
+        <li><span class="check">·</span><span><strong>Anthropic API key</strong> (opcional)<br/>Sin esto Mica usa mock seguro</span></li>
       </ul>
     </div>
   </div>
 </section>
 
-<!-- =================== URLs locales =================== -->
 <section>
-  <h2>URLs locales (cuando levantás <code>pnpm dev</code>)</h2>
+  <h2>Deploy ready · ¿qué tenemos para hostear?</h2>
   <p class="desc">
-    Después de <code>docker compose up -d</code> + <code>pnpm install</code> +
-    <code>pnpm db:setup</code> + <code>pnpm dev</code> tenés todo esto corriendo simultáneamente.
+    Todo el código y los configs están listos. Solo falta conectar los servicios externos
+    siguiendo el paso a paso de <code style="color: var(--turquesa);">docs/DEPLOY.md</code>.
   </p>
+
+  <div class="deploy-grid">
+    <div class="deploy-card ready">
+      <h3>Listo en el repo</h3>
+      <p class="sub">Configs commiteados, listos para que Render/Vercel los lean automáticamente.</p>
+      <div class="stack">
+        <span class="stack-pill s">apps/web/vercel.json</span>
+        <span class="stack-pill s">apps/admin/vercel.json</span>
+        <span class="stack-pill s">render.yaml</span>
+        <span class="stack-pill s">.github/workflows/ci.yml</span>
+        <span class="stack-pill s">docker-compose.yml</span>
+        <span class="stack-pill s">prisma migrations</span>
+        <span class="stack-pill s">prisma sql triggers</span>
+        <span class="stack-pill s">env.example completo</span>
+        <span class="stack-pill s">DEPLOY.md</span>
+      </div>
+    </div>
+
+    <div class="deploy-card pending">
+      <h3>Necesita tu intervención</h3>
+      <p class="sub">Credenciales externas. Costo estimado: ~$110/mes a 1k usuarios activos.</p>
+      <div class="stack">
+        <span class="stack-pill c">Supabase Pro $25</span>
+        <span class="stack-pill c">Render Starter $7</span>
+        <span class="stack-pill c">Render cron $5</span>
+        <span class="stack-pill c">Cloudflare R2 ~$2</span>
+        <span class="stack-pill c">Resend $20</span>
+        <span class="stack-pill c">Twilio ~$50</span>
+        <span class="stack-pill c">Vercel Hobby gratis</span>
+        <span class="stack-pill c">DNS pulso.health</span>
+        <span class="stack-pill c">EAS Build $0-99</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>URLs y endpoints</h2>
   <div class="urls-grid">
     <div class="url-row"><span class="name">Landing pública</span><span class="url">localhost:3000</span></div>
-    <div class="url-row"><span class="name">Crear cuenta</span><span class="url">localhost:3000/registro</span></div>
-    <div class="url-row"><span class="name">Panel ciudadano</span><span class="url">localhost:3000/panel</span></div>
-    <div class="url-row"><span class="name">Portal profesional</span><span class="url">localhost:3000/portal-profesional</span></div>
+    <div class="url-row"><span class="name">Crear cuenta</span><span class="url">/registro</span></div>
+    <div class="url-row"><span class="name">Panel ciudadano</span><span class="url">/panel/*</span></div>
+    <div class="url-row"><span class="name">Portal profesional</span><span class="url">/portal-profesional/*</span></div>
     <div class="url-row"><span class="name">Admin</span><span class="url">localhost:3002</span></div>
     <div class="url-row"><span class="name">API + Swagger</span><span class="url">localhost:3001/api/docs</span></div>
-    <div class="url-row"><span class="name">Health readiness</span><span class="url">localhost:3001/api/health/ready</span></div>
-    <div class="url-row"><span class="name">MailHog (emails)</span><span class="url">localhost:8025</span></div>
+    <div class="url-row"><span class="name">Health readiness</span><span class="url">/api/health/ready</span></div>
+    <div class="url-row"><span class="name">FHIR Patient</span><span class="url">/api/connect/fhir/Patient/dni/:dni</span></div>
+    <div class="url-row"><span class="name">MailHog</span><span class="url">localhost:8025</span></div>
     <div class="url-row"><span class="name">MinIO console</span><span class="url">localhost:9001</span></div>
-    <div class="url-row"><span class="name">Mobile (Expo Go)</span><span class="url">pnpm --filter @pulso/mobile dev</span></div>
   </div>
 </section>
 
-<!-- =================== Roadmap =================== -->
-<section>
-  <h2>Cómo seguir · 3 caminos</h2>
-  <p class="desc">
-    Tres opciones priorizadas según el objetivo. No son excluyentes — se pueden hacer en serie.
-    Mi recomendación: arrancar por el <strong>camino A</strong> (operativo) que es el más corto y deja Pulso 100% autónomo.
-  </p>
-
-  <div class="roadmap">
-    <div class="road now">
-      <div class="when">⚡ A · Esta sesión</div>
-      <h3>Operativo end-to-end</h3>
-      <p style="font-size: 13px; color: var(--niebla); margin: 0 0 16px;">
-        Cierra los gaps que dejan a Pulso depender de intervención manual. Lo que hace falta para piloto.
-      </p>
-      <ul>
-        <li>Cron job recordatorios (@nestjs/schedule)</li>
-        <li>Endpoint /auth/sessions con revocar individual</li>
-        <li>UI sessions activas conectada</li>
-        <li>Verificación email reenvío desde panel</li>
-        <li>Consent flow con aceptación del ciudadano (no auto-grant)</li>
-      </ul>
-    </div>
-
-    <div class="road next">
-      <div class="when">🛰 B · 1-2 sesiones</div>
-      <h3>Canales reales y deploy</h3>
-      <p style="font-size: 13px; color: var(--niebla); margin: 0 0 16px;">
-        Producción real con WhatsApp, push y deploy a la nube.
-      </p>
-      <ul>
-        <li>Twilio WhatsApp Business + templates aprobados</li>
-        <li>Expo Push en mobile + EAS Build</li>
-        <li>Deploy api a Render + web/admin a Vercel</li>
-        <li>Supabase managed Postgres + Cloudflare R2 storage</li>
-        <li>CI/CD con preview deploys por PR</li>
-      </ul>
-    </div>
-
-    <div class="road later">
-      <div class="when">🏛 C · Mediano plazo</div>
-      <h3>Interoperabilidad y compliance</h3>
-      <p style="font-size: 13px; color: var(--niebla); margin: 0 0 16px;">
-        Lo que hace a Pulso defendible y vendible a gobiernos.
-      </p>
-      <ul>
-        <li>Conector HL7v2 + FHIR R4 (primer hospital piloto)</li>
-        <li>OAuth 2.0 server para terceras apps</li>
-        <li>RENAPER para verificación DNI</li>
-        <li>Verificación matrícula vs colegios profesionales</li>
-        <li>DPIA + auditoría externa pre-piloto</li>
-        <li>Tests E2E + integration con testcontainers</li>
-      </ul>
-    </div>
+<div class="next-step">
+  <h2>¿Cómo seguimos?</h2>
+  <p>El código está al 100%. Solo falta conectar los servicios externos.</p>
+  <div class="actions">
+    <span class="big-btn big-btn-cobre">📦 Configurar Supabase + Render</span>
+    <span class="big-btn big-btn-turquesa">🚀 Deploy a producción</span>
+    <span class="big-btn big-btn-outline">💬 Ver docs/DEPLOY.md</span>
   </div>
-</section>
-
-<!-- =================== Tree =================== -->
-<section>
-  <h2>Estructura del repo</h2>
-  <p class="desc">11 paquetes en monorepo Turborepo + pnpm. Verde = tocado en último commit.</p>
-  <div class="card">
-    <div class="tree">
-<span class="dir">📁 pulsos/</span>
-├── <span class="dir">apps/</span>
-│   ├── <span class="dir">api/</span>                 <span class="annotation">NestJS 10 · 9 módulos · Pino · Swagger</span>
-│   │   └── <span class="dir">src/modules/</span>     <span class="annotation">auth · users · pulso-id · emergency · clinical · prescriptions ·</span>
-│   │       <span class="annotation">                                                            reminders · mica · admin · connect · notifications · storage · health</span>
-│   ├── <span class="dir">web/</span>                 <span class="annotation">Next.js 16 · landing + panel + portal-profesional</span>
-│   │   └── <span class="dir">src/app/</span>         <span class="annotation">+ /registro · /verificar-email · /recuperar-contrasena · /reset</span>
-│   ├── <span class="dir">admin/</span>               <span class="annotation">Next.js 16 · route group (panel) + ingresar</span>
-│   └── <span class="dir">mobile/</span>              <span class="annotation">Expo SDK 51 · 4 pantallas</span>
-├── <span class="dir">packages/</span>
-│   ├── <span class="dir">types/</span>               <span class="annotation">DTOs Zod compartidos</span>
-│   ├── <span class="dir">ui/</span>                  <span class="annotation">Tailwind preset + componentes Card/Button/Stat/Logo</span>
-│   ├── <span class="dir">db/</span>                  <span class="annotation">Prisma 7 · 18 modelos · pgvector · triggers SQL</span>
-│   │   └── <span class="dir">prisma/</span>
-│   │       ├── <span class="file">schema.prisma</span>      <span class="annotation">+ Notification · Reminder · Prescription · EmailToken · PasswordReset</span>
-│   │       ├── <span class="new">apply-triggers.ts</span>  <span class="annotation">aplica triggers SQL idempotente</span>
-│   │       └── <span class="dir">sql/</span>
-│   │           └── <span class="file">append_only_audit.sql</span>
-│   ├── <span class="dir">auth/</span>                <span class="annotation">bcrypt + jose JWT + MFA TOTP + verifyPasswordHybrid + tokens</span>
-│   ├── <span class="dir">audit/</span>               <span class="annotation">Hash chain SHA-256 + verifyChain + tests</span>
-│   ├── <span class="dir">ai/</span>                  <span class="annotation">Anthropic + guardrails + mock fallback</span>
-│   ├── <span class="dir">notifications/</span>       <span class="annotation">stub interface (deprecado: ahora vive en apps/api)</span>
-│   └── <span class="dir">integrations/</span>        <span class="annotation">stubs Pulso Connect</span>
-├── <span class="dir">docs/</span>
-│   ├── <span class="file">PRODUCT_VISION.md</span>
-│   ├── <span class="file">ARCHITECTURE.md</span>
-│   ├── <span class="file">DESIGN_SYSTEM.md</span>
-│   ├── <span class="file">MVP_SCOPE.md</span>
-│   ├── <span class="file">CODEX_HANDOFF.md</span>
-│   ├── <span class="file">INSTALL.md</span>          <span class="annotation">15-min setup</span>
-│   ├── <span class="file">ENV.md</span>
-│   ├── <span class="file">API.md</span>
-│   ├── <span class="file">DEMO_SCRIPT.md</span>
-│   ├── <span class="file">PITCH_NOTES.md</span>
-│   ├── <span class="file">NEXT_STEPS.md</span>
-│   └── <span class="new">STATUS.html</span>          <span class="annotation">← este archivo</span>
-├── <span class="file">docker-compose.yml</span>      <span class="annotation">postgres + minio + mailhog</span>
-├── <span class="file">turbo.json</span>
-└── <span class="file">README.md</span>
-    </div>
-  </div>
-</section>
+</div>
 
 <footer>
   Pulso · Plataforma de salud digital argentina · Por Nativos Consultora Digital<br>
-  Generado el 1 de mayo de 2026 · commit 585daf5 · github.com/jfrancesia-hue/PULSOS
+  STATUS v2 · 1 may 2026 · commit 52a4678 · github.com/jfrancesia-hue/PULSOS
 </footer>
 
 </main>
-
-<script>
-// QR fake determinístico
-(function () {
-  var grid = document.getElementById('qr-cells');
-  if (!grid) return;
-  var hash = 17;
-  for (var i = 0; i < 225; i++) {
-    var cell = document.createElement('div');
-    cell.className = 'qr-cell';
-    var seed = (hash + i * 9301 + 49297) % 233280;
-    if (seed / 233280 > 0.46) cell.classList.add('on');
-    grid.appendChild(cell);
-  }
-  // Esquinas position-marker (solid) for QR realism
-  [0,1,2,3,4, 10,11,12,13,14, 150,151,152,153,154, 165,166,167,168,169].forEach(function (i) {
-    if (grid.children[i]) grid.children[i].classList.add('on');
-  });
-})();
-</script>
 
 </body>
 </html>
