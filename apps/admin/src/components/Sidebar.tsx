@@ -1,67 +1,67 @@
-import Link from 'next/link';
 import { Logo } from '@pulso/ui';
-import {
-  LayoutDashboard,
-  Users,
-  Stethoscope,
-  Building2,
-  QrCode,
-  ShieldCheck,
-  Network,
-  LogOut,
-} from 'lucide-react';
-import { logoutAction } from '../app/(panel)/actions';
-
-const NAV = [
-  { href: '/', label: 'Resumen', icon: LayoutDashboard },
-  { href: '/usuarios', label: 'Usuarios', icon: Users },
-  { href: '/profesionales', label: 'Profesionales', icon: Stethoscope },
-  { href: '/instituciones', label: 'Instituciones', icon: Building2 },
-  { href: '/accesos-emergencia', label: 'Accesos QR', icon: QrCode },
-  { href: '/auditoria', label: 'Auditoría', icon: ShieldCheck },
-  { href: '/connect', label: 'Connect', icon: Network },
-];
+import { Activity } from 'lucide-react';
+import { SidebarNav } from './premium/SidebarNav';
+import { LogoutButton } from './premium/LogoutButton';
 
 export function Sidebar({ email }: { email?: string }) {
   const initials = (email ?? 'AD').slice(0, 2).toUpperCase();
+
   return (
     <aside className="fixed inset-y-0 left-0 z-30 flex w-72 flex-col border-r border-white/5 bg-pulso-azul-medianoche/95 backdrop-blur-xl">
-      <div className="flex items-center gap-3 border-b border-white/5 px-6 py-6">
+      <div className="pointer-events-none absolute inset-y-0 -right-px w-px bg-gradient-to-b from-transparent via-pulso-turquesa/30 to-transparent" />
+
+      <div className="flex items-center justify-between gap-3 border-b border-white/5 px-6 py-6">
         <Logo variant="full" size="md" className="text-pulso-blanco-calido" />
+        <span className="rounded-md border border-pulso-cobre/30 bg-pulso-cobre/10 px-2 py-1 text-2xs font-bold uppercase tracking-wider text-pulso-cobre">
+          Admin
+        </span>
       </div>
-      <nav className="flex-1 space-y-1 px-3 py-6">
-        {NAV.map((item) => {
-          const Icon = item.icon;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm text-pulso-niebla transition-colors hover:bg-white/[0.03] hover:text-pulso-blanco-calido"
-            >
-              <Icon size={16} strokeWidth={1.6} />
-              <span>{item.label}</span>
-            </Link>
-          );
-        })}
-      </nav>
-      <div className="border-t border-white/5 p-4">
-        <div className="flex items-center gap-3 rounded-md bg-white/[0.02] px-3 py-2.5">
-          <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-pulso-cobre/20 text-xs font-semibold text-pulso-cobre">
+
+      <div className="px-5 pt-4 pb-2">
+        <div className="text-2xs font-semibold uppercase tracking-[0.18em] text-pulso-niebla/50">
+          Plataforma
+        </div>
+      </div>
+
+      <SidebarNav />
+
+      <div className="mx-3 mb-3 rounded-lg border border-white/5 bg-white/[0.02] p-3">
+        <div className="mb-2 flex items-center justify-between text-2xs uppercase tracking-wider text-pulso-niebla">
+          <span className="flex items-center gap-1.5">
+            <Activity size={10} className="text-pulso-turquesa" />
+            Sistema
+          </span>
+          <span className="font-mono text-success">OK</span>
+        </div>
+        <svg viewBox="0 0 200 24" className="h-5 w-full">
+          <defs>
+            <linearGradient id="sidebarPulse" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#2BD4C9" stopOpacity="0" />
+              <stop offset="50%" stopColor="#2BD4C9" stopOpacity="0.9" />
+              <stop offset="100%" stopColor="#D97847" stopOpacity="0.6" />
+            </linearGradient>
+          </defs>
+          <path
+            d="M0,12 L40,12 L48,4 L56,20 L64,2 L72,22 L80,12 L120,12 L128,6 L136,18 L200,12"
+            stroke="url(#sidebarPulse)"
+            strokeWidth="1.5"
+            fill="none"
+            strokeLinejoin="round"
+            className="pulse-line"
+          />
+        </svg>
+      </div>
+
+      <div className="border-t border-white/5 p-3">
+        <div className="flex items-center gap-3 rounded-md bg-gradient-to-r from-pulso-cobre/10 to-transparent px-3 py-2.5 transition-colors hover:from-pulso-cobre/20">
+          <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-pulso-cobre to-pulso-cobre-deep text-xs font-bold text-pulso-azul-medianoche">
             {initials}
           </div>
           <div className="min-w-0 flex-1">
-            <div className="truncate text-sm font-medium">Pulso Admin</div>
-            <div className="truncate text-xs text-pulso-niebla">{email ?? '—'}</div>
+            <div className="truncate text-sm font-semibold">Pulso Admin</div>
+            <div className="truncate text-2xs text-pulso-niebla">{email ?? '—'}</div>
           </div>
-          <form action={logoutAction}>
-            <button
-              type="submit"
-              aria-label="Cerrar sesión"
-              className="rounded-md p-1.5 text-pulso-niebla hover:bg-white/[0.05] hover:text-danger"
-            >
-              <LogOut size={14} />
-            </button>
-          </form>
+          <LogoutButton />
         </div>
       </div>
     </aside>
