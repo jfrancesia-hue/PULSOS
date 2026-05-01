@@ -110,24 +110,19 @@ export class PrescriptionsService {
       payload: { itemCount: input.items.length, validezDias },
     });
 
-    await this.notifications.dispatch({
-      userId: profile.userId,
-      channel: 'IN_APP',
-      category: 'PRESCRIPTION_ISSUED',
-      title: 'Tenés una receta digital nueva',
-      body: `Dr/a. ${professional.nombre} ${professional.apellido} te emitió una receta con ${input.items.length} ítem${input.items.length !== 1 ? 's' : ''}. Válida hasta ${validaHasta.toLocaleDateString('es-AR')}.`,
-      payload: { prescriptionId: prescription.id, actionUrl: `/panel/recetas/${prescription.id}` },
-    });
-    await this.notifications.dispatch({
-      userId: profile.userId,
-      channel: 'EMAIL',
-      category: 'PRESCRIPTION_ISSUED',
-      title: 'Receta digital de Pulso',
-      body: `Hola ${profile.nombre}, Dr/a. ${professional.nombre} ${professional.apellido} te emitió una receta. Vencimiento: ${validaHasta.toLocaleDateString('es-AR')}.`,
-      payload: {
-        actionUrl: `${process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'}/panel/recetas/${prescription.id}`,
+    await this.notifications.dispatchMulti(
+      {
+        userId: profile.userId,
+        category: 'PRESCRIPTION_ISSUED',
+        title: 'Tenés una receta digital nueva',
+        body: `Dr/a. ${professional.nombre} ${professional.apellido} te emitió una receta con ${input.items.length} ítem${input.items.length !== 1 ? 's' : ''}. Válida hasta ${validaHasta.toLocaleDateString('es-AR')}.`,
+        payload: {
+          prescriptionId: prescription.id,
+          actionUrl: `${process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'}/panel/recetas/${prescription.id}`,
+        },
       },
-    });
+      ['EMAIL', 'IN_APP'],
+    );
 
     return prescription;
   }

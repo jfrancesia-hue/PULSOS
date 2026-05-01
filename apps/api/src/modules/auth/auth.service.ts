@@ -15,7 +15,7 @@ import {
   signAccessToken,
   signRefreshToken,
   verifyMfaToken,
-  verifyPassword,
+  verifyPasswordHybrid,
   verifyToken,
 } from '@pulso/auth';
 import type { Role } from '@pulso/types';
@@ -147,9 +147,7 @@ export class AuthService {
       throw new UnauthorizedException('Cuenta inactiva. Contactá al administrador.');
     }
 
-    const ok = user.passwordHash.startsWith('scrypt$')
-      ? this.verifyScrypt(dto.password, user.passwordHash)
-      : await verifyPassword(dto.password, user.passwordHash);
+    const ok = await verifyPasswordHybrid(dto.password, user.passwordHash);
 
     if (!ok) {
       const newFailed = user.failedLoginCount + 1;
@@ -410,9 +408,7 @@ export class AuthService {
     const user = await this.prisma.client.user.findUnique({ where: { id: userId } });
     if (!user) throw new NotFoundException('Usuario no encontrado.');
 
-    const ok = user.passwordHash.startsWith('scrypt$')
-      ? this.verifyScrypt(currentPassword, user.passwordHash)
-      : await verifyPassword(currentPassword, user.passwordHash);
+    const ok = await verifyPasswordHybrid(currentPassword, user.passwordHash);
     if (!ok) throw new UnauthorizedException('Contraseña actual incorrecta.');
 
     const passwordHash = await hashPassword(newPassword);
@@ -516,14 +512,4 @@ export class AuthService {
     };
   }
 
-  private verifyScrypt(password: string, stored: string): boolean {
-    const parts = stored.split('$');
-    if (parts.length !== 3 || parts[0] !== 'scrypt') return false;
-    const [, salt, expected] = parts as [string, string, string];
-
-    const { scryptSync, timingSafeEqual } = require('node:crypto');
-    const derived = scryptSync(password, salt, 64).toString('hex');
-    if (derived.length !== expected.length) return false;
-    return timingSafeEqual(Buffer.from(derived, 'hex'), Buffer.from(expected, 'hex'));
-  }
 }

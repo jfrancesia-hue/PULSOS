@@ -78,7 +78,7 @@ export class MicaService {
             },
           });
 
-      if (last === null) {
+      if (!last) {
         await this.audit.append({
           actorId: input.userId,
           actorRole: 'CIUDADANO',

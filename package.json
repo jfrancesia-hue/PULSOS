@@ -27,6 +27,8 @@
     "db:migrate": "pnpm --filter @pulso/db migrate",
     "db:seed": "pnpm --filter @pulso/db seed",
     "db:studio": "pnpm --filter @pulso/db studio",
+    "db:triggers": "pnpm --filter @pulso/db triggers",
+    "db:setup": "pnpm --filter @pulso/db setup",
     "prepare": "husky || true"
   },
   "devDependencies": {

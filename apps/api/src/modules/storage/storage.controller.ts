@@ -1,7 +1,6 @@
 import { BadRequestException, Body, Controller, Delete, ForbiddenException, Get, NotFoundException, Param, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { IsEnum, IsInt, IsString, MaxLength, Max, Min } from 'class-validator';
-import { createHash } from 'node:crypto';
 import { StorageService } from './storage.service';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { AuditService } from '../../common/audit/audit.service';
@@ -161,10 +160,4 @@ export class StorageController {
     await this.prisma.client.clinicalDocument.delete({ where: { id } });
     return { ok: true };
   }
-}
-
-// Helper exportado para el cliente: hashing del contenido SHA-256.
-// Nota: el cliente debe calcular esto antes de subir.
-export function hashFile(buffer: Buffer): string {
-  return createHash('sha256').update(buffer).digest('hex');
 }

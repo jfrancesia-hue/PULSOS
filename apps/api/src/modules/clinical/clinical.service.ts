@@ -178,22 +178,19 @@ export class ClinicalService {
       payload: { scopes: dto.scopes, motivo: dto.motivo, demo: true },
     });
 
-    await this.notifications.dispatch({
-      userId: profile.userId,
-      channel: 'EMAIL',
-      category: 'CONSENT_GRANTED',
-      title: 'Pulso · Acceso clínico autorizado',
-      body: `Dr/a. ${professional.nombre} ${professional.apellido} (M.N. ${professional.matriculaNacional ?? '—'}) ya tiene acceso a tu perfil clínico para: ${dto.motivo}. Podés revocar el acceso desde tu panel de consentimientos.`,
-      payload: { actionUrl: `${process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'}/panel/consentimientos` },
-    });
-    await this.notifications.dispatch({
-      userId: profile.userId,
-      channel: 'IN_APP',
-      category: 'CONSENT_GRANTED',
-      title: 'Acceso clínico autorizado',
-      body: `Dr/a. ${professional.nombre} ${professional.apellido} ya puede ver tu perfil.`,
-      payload: { consentId: consent.id, actionUrl: '/panel/consentimientos' },
-    });
+    await this.notifications.dispatchMulti(
+      {
+        userId: profile.userId,
+        category: 'CONSENT_GRANTED',
+        title: 'Acceso clínico autorizado',
+        body: `Dr/a. ${professional.nombre} ${professional.apellido} (M.N. ${professional.matriculaNacional ?? '—'}) ya tiene acceso a tu perfil clínico para: ${dto.motivo}. Podés revocar el acceso desde tu panel de consentimientos.`,
+        payload: {
+          consentId: consent.id,
+          actionUrl: `${process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'}/panel/consentimientos`,
+        },
+      },
+      ['EMAIL', 'IN_APP'],
+    );
 
     return consent;
   }

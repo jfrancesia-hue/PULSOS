@@ -32,6 +32,17 @@ export class NotificationsService {
     private readonly smtp: SmtpDispatcher,
   ) {}
 
+  /**
+   * Helper: dispara la misma notificación por múltiples canales en paralelo.
+   * Cada canal se persiste y se envía por separado, errores no bloquean a los otros.
+   */
+  async dispatchMulti(
+    base: Omit<DispatchInput, 'channel'>,
+    channels: Channel[],
+  ): Promise<void> {
+    await Promise.all(channels.map((channel) => this.dispatch({ ...base, channel })));
+  }
+
   async dispatch(input: DispatchInput): Promise<void> {
     const notification = await this.prisma.client.notification.create({
       data: {

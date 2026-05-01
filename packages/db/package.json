@@ -14,6 +14,8 @@
     "migrate:deploy": "prisma migrate deploy",
     "studio": "prisma studio",
     "seed": "tsx prisma/seed.ts",
+    "triggers": "tsx prisma/apply-triggers.ts",
+    "setup": "pnpm migrate:deploy && pnpm triggers && pnpm seed",
     "format": "prisma format",
     "lint": "eslint . --max-warnings=0",
     "typecheck": "tsc --noEmit",

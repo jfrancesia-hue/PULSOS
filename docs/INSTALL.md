@@ -68,8 +68,11 @@ Para detalles de cada variable, ver **[ENV.md](./ENV.md)**.
 ```bash
 pnpm db:generate    # genera el cliente Prisma
 pnpm db:migrate     # crea las tablas
+pnpm db:triggers    # aplica triggers SQL append-only en AuditLog (idempotente)
 pnpm db:seed        # carga datos demo (Nativos Consultora + 7 usuarios)
 ```
+
+> **Atajo:** `pnpm db:setup` corre `migrate:deploy + triggers + seed` en orden.
 
 Si todo va bien deberías ver:
 
@@ -101,6 +104,9 @@ Esto arranca via Turborepo:
 | Admin | http://localhost:3002/ingresar | Solo ADMIN/SUPERADMIN |
 | API | http://localhost:3001/api | Endpoints autenticados |
 | Swagger | http://localhost:3001/api/docs | Documentación OpenAPI |
+| Health | http://localhost:3001/api/health/ready | Readiness con DB + audit chain |
+| MailHog | http://localhost:8025 | Bandeja de emails locales (verificación, recetas, alertas) |
+| MinIO console | http://localhost:9001 | Storage de documentos clínicos (user `pulso` / `pulso-minio-dev`) |
 
 Para mobile (en otra terminal):
 

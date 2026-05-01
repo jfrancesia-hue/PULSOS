@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useTransition } from 'react';
-import { Button, Input, Badge } from '@pulso/ui';
+import { useState, useTransition, useEffect } from 'react';
+import QRCodeLib from 'qrcode';
+import { Button, Input } from '@pulso/ui';
 import { ShieldCheck, ShieldOff, QrCode } from 'lucide-react';
 import { mfaEnrollAction, mfaActivateAction, mfaDisableAction } from './actions';
 
@@ -72,12 +73,8 @@ export function MfaPanel({ mfaEnabled }: { mfaEnabled: boolean }) {
           inputMode="numeric"
           maxLength={6}
         />
-        {error ? (
-          <div className="rounded-md border border-danger/30 bg-danger/10 p-2 text-xs text-danger">{error}</div>
-        ) : null}
-        {success ? (
-          <div className="rounded-md border border-success/30 bg-success/10 p-2 text-xs text-success">{success}</div>
-        ) : null}
+        {error ? <Alert variant="error">{error}</Alert> : null}
+        {success ? <Alert variant="success">{success}</Alert> : null}
         <Button variant="danger" size="sm" onClick={disable} disabled={pending || code.length !== 6}>
           <ShieldOff size={12} />
           Desactivar MFA
@@ -90,14 +87,18 @@ export function MfaPanel({ mfaEnabled }: { mfaEnabled: boolean }) {
     return (
       <div className="space-y-4">
         <p className="text-sm text-pulso-blanco-calido">
-          1. Escaneá este código con tu app de autenticación o ingresá el secret manualmente.
+          1. Escaneá este código con tu app de autenticación (Google Authenticator, Authy,
+          1Password, Microsoft Authenticator).
         </p>
-        <div className="rounded-md border border-white/5 bg-pulso-blanco-calido p-4 text-center">
-          <QRCode otpauthUrl={enroll.otpauthUrl} />
+        <div className="rounded-md border border-white/5 bg-pulso-blanco-calido p-4">
+          <LocalQr value={enroll.otpauthUrl} />
         </div>
-        <div className="rounded-md border border-white/5 bg-white/[0.02] px-3 py-2 font-mono text-2xs text-pulso-niebla">
-          {enroll.secret}
-        </div>
+        <details className="text-xs text-pulso-niebla">
+          <summary className="cursor-pointer">¿Tu app no escanea? Ingresá el secret manual</summary>
+          <div className="mt-2 break-all rounded-md border border-white/5 bg-white/[0.02] px-3 py-2 font-mono text-2xs text-pulso-niebla">
+            {enroll.secret}
+          </div>
+        </details>
         <p className="text-sm text-pulso-blanco-calido">
           2. Ingresá el código de 6 dígitos que aparece en la app:
         </p>
@@ -108,9 +109,7 @@ export function MfaPanel({ mfaEnabled }: { mfaEnabled: boolean }) {
           inputMode="numeric"
           maxLength={6}
         />
-        {error ? (
-          <div className="rounded-md border border-danger/30 bg-danger/10 p-2 text-xs text-danger">{error}</div>
-        ) : null}
+        {error ? <Alert variant="error">{error}</Alert> : null}
         <Button variant="primary" size="md" onClick={activate} disabled={pending || code.length !== 6}>
           <ShieldCheck size={14} />
           Activar MFA
@@ -121,12 +120,8 @@ export function MfaPanel({ mfaEnabled }: { mfaEnabled: boolean }) {
 
   return (
     <div className="space-y-3">
-      {success ? (
-        <div className="rounded-md border border-success/30 bg-success/10 p-2 text-xs text-success">{success}</div>
-      ) : null}
-      {error ? (
-        <div className="rounded-md border border-danger/30 bg-danger/10 p-2 text-xs text-danger">{error}</div>
-      ) : null}
+      {success ? <Alert variant="success">{success}</Alert> : null}
+      {error ? <Alert variant="error">{error}</Alert> : null}
       <Button variant="primary" size="md" onClick={startEnroll} disabled={pending}>
         <QrCode size={14} />
         Activar MFA
@@ -135,17 +130,45 @@ export function MfaPanel({ mfaEnabled }: { mfaEnabled: boolean }) {
   );
 }
 
-function QRCode({ otpauthUrl }: { otpauthUrl: string }) {
-  // Generamos un QR vía servicio público de QR (qr-server.com no requiere key).
-  // En producción, usar librería local para no depender de tercero.
-  const url = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(otpauthUrl)}`;
+function LocalQr({ value }: { value: string }) {
+  const [dataUrl, setDataUrl] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    QRCodeLib.toDataURL(value, { width: 220, margin: 1, errorCorrectionLevel: 'M' })
+      .then(setDataUrl)
+      .catch((err: unknown) => setError(err instanceof Error ? err.message : 'No pudimos generar el QR'));
+  }, [value]);
+
+  if (error) {
+    return <div className="text-center text-xs text-danger">{error}</div>;
+  }
+  if (!dataUrl) {
+    return (
+      <div className="mx-auto h-[220px] w-[220px] animate-pulse rounded-md bg-pulso-niebla/20" />
+    );
+  }
   return (
     <img
-      src={url}
+      src={dataUrl}
       alt="Código QR para configurar MFA"
-      className="mx-auto h-44 w-44"
-      width={180}
-      height={180}
+      className="mx-auto h-[220px] w-[220px]"
+      width={220}
+      height={220}
     />
+  );
+}
+
+function Alert({ variant, children }: { variant: 'success' | 'error'; children: React.ReactNode }) {
+  return (
+    <div
+      className={
+        variant === 'success'
+          ? 'rounded-md border border-success/30 bg-success/10 p-2 text-xs text-success'
+          : 'rounded-md border border-danger/30 bg-danger/10 p-2 text-xs text-danger'
+      }
+    >
+      {children}
+    </div>
   );
 }

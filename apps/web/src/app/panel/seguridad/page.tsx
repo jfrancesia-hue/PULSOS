@@ -1,19 +1,9 @@
 import { Card, CardHeader, CardTitle, CardDescription, Badge } from '@pulso/ui';
-import { ShieldCheck, KeyRound, Smartphone, Clock } from 'lucide-react';
+import { KeyRound, Smartphone, Clock } from 'lucide-react';
 import { requireUser } from '@/lib/session';
-import { apiFetchAuthed } from '@/lib/api';
 import { ChangePasswordForm } from './ChangePasswordForm';
 import { MfaPanel } from './MfaPanel';
 import { SessionsList } from './SessionsList';
-
-interface RefreshTokenSummary {
-  id: string;
-  createdAt: string;
-  ip: string | null;
-  userAgent: string | null;
-  expiresAt: string;
-  revokedAt: string | null;
-}
 
 export default async function SeguridadPage() {
   const user = await requireUser();
@@ -68,26 +58,18 @@ export default async function SeguridadPage() {
         </Card>
       </div>
 
-      <SessionsView />
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Clock size={16} className="text-pulso-turquesa" />
+            Sesiones activas
+          </CardTitle>
+          <CardDescription>
+            Dispositivos donde está abierta tu sesión. Cambiar tu contraseña cierra todas.
+          </CardDescription>
+        </CardHeader>
+        <SessionsList />
+      </Card>
     </div>
-  );
-}
-
-async function SessionsView() {
-  // RefreshTokens no se exponen aún por API (hay que armar endpoint).
-  // Por ahora UI placeholder de sesiones — Codex puede conectar /auth/sessions.
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Clock size={16} className="text-pulso-turquesa" />
-          Sesiones activas
-        </CardTitle>
-        <CardDescription>
-          Dispositivos donde está abierta tu sesión. Cambiar tu contraseña cierra todas.
-        </CardDescription>
-      </CardHeader>
-      <SessionsList />
-    </Card>
   );
 }

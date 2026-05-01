@@ -44,25 +44,19 @@ export class EmergencyService {
     });
 
     // Notificación al ciudadano: sabe en tiempo real que alguien accedió a su QR.
-    await this.notifications.dispatch({
-      userId: qr.userId,
-      channel: 'EMAIL',
-      category: 'EMERGENCY_QR_ACCESSED',
-      title: '🚨 Acceso a tu QR de emergencia',
-      body: `Alguien acaba de escanear tu QR de emergencia${ctx.ip ? ` desde la IP ${ctx.ip}` : ''}. Si no estás en una emergencia o no autorizaste este acceso, te recomendamos revocar el QR desde tu panel.`,
-      payload: {
-        actionUrl: `${process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'}/panel/historial`,
-        accessLogId: log.id,
+    await this.notifications.dispatchMulti(
+      {
+        userId: qr.userId,
+        category: 'EMERGENCY_QR_ACCESSED',
+        title: 'Acceso a tu QR de emergencia',
+        body: `Alguien acaba de escanear tu QR de emergencia${ctx.ip ? ` desde la IP ${ctx.ip}` : ''}. Si no estás en una emergencia o no autorizaste este acceso, te recomendamos revocar el QR desde tu panel.`,
+        payload: {
+          actionUrl: `${process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'}/panel/historial`,
+          accessLogId: log.id,
+        },
       },
-    });
-    await this.notifications.dispatch({
-      userId: qr.userId,
-      channel: 'IN_APP',
-      category: 'EMERGENCY_QR_ACCESSED',
-      title: 'Acceso a tu QR de emergencia',
-      body: ctx.ip ? `Acceso desde IP ${ctx.ip}` : 'Acceso registrado',
-      payload: { accessLogId: log.id },
-    });
+      ['EMAIL', 'IN_APP'],
+    );
 
     await this.audit.append({
       actorId: null,
