@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --pulso-azul-profundo: #0a1628;
+  --pulso-azul-noche: #0f1f3d;
+  --pulso-azul-medianoche: #050b14;
+  --pulso-turquesa: #2bd4c9;
+  --pulso-turquesa-glow: #5ee7de;
+  --pulso-turquesa-deep: #14807a;
+  --pulso-cobre: #d97847;
+  --pulso-cobre-deep: #a85829;
+  --pulso-blanco-calido: #f5f1ea;
+  --pulso-niebla: #c7cdd9;
+
+  --radius-md: 12px;
+  --radius-lg: 16px;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+  body {
+    @apply bg-pulso-azul-profundo text-pulso-blanco-calido font-sans antialiased;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  }
+  ::selection {
+    background-color: rgba(43, 212, 201, 0.35);
+    color: var(--pulso-blanco-calido);
+  }
+
+  *:focus-visible {
+    outline: 2px solid var(--pulso-turquesa);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+@layer components {
+  .pulso-glass {
+    background: rgba(15, 31, 61, 0.6);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(43, 212, 201, 0.15);
+  }
+
+  .pulso-topo {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Cg fill='none' stroke='rgba(43,212,201,0.06)' stroke-width='1'%3E%3Cpath d='M0,200 Q100,140 200,200 T400,200'/%3E%3Cpath d='M0,220 Q100,160 200,220 T400,220'/%3E%3Cpath d='M0,240 Q100,180 200,240 T400,240'/%3E%3Cpath d='M0,180 Q100,120 200,180 T400,180'/%3E%3Cpath d='M0,160 Q100,100 200,160 T400,160'/%3E%3C/g%3E%3C/svg%3E");
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

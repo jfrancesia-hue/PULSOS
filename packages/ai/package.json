@@ -1,0 +1,19 @@
+{
+  "name": "@pulso/ai",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Wrapper Anthropic Claude para Pulso Mica con guardrails de no-prescripción.",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "lint": "eslint . --max-warnings=0",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.1",
+    "@pulso/types": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  }
+}

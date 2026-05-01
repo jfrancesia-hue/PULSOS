@@ -1,0 +1,38 @@
+{
+  "name": "@pulso/db",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Schema Prisma + cliente DB para Pulso. PostgreSQL 16 + pgvector.",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "generate": "prisma generate",
+    "migrate": "prisma migrate dev",
+    "migrate:deploy": "prisma migrate deploy",
+    "studio": "prisma studio",
+    "seed": "tsx prisma/seed.ts",
+    "format": "prisma format",
+    "lint": "eslint . --max-warnings=0",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf .turbo dist *.tsbuildinfo node_modules/.prisma"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.0.0",
+    "@prisma/client": "^7.0.0",
+    "pg": "^8.13.1"
+  },
+  "devDependencies": {
+    "@pulso/types": "workspace:*",
+    "@types/pg": "^8.11.10",
+    "prisma": "^7.0.0",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.3"
+  },
+  "prisma": {
+    "schema": "prisma/schema.prisma",
+    "seed": "tsx prisma/seed.ts"
+  }
+}

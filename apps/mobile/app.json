@@ -1,0 +1,24 @@
+{
+  "expo": {
+    "name": "Pulso",
+    "slug": "pulso",
+    "scheme": "pulso",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "platforms": ["ios", "android", "web"],
+    "splash": {
+      "backgroundColor": "#0A1628"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.nativos.pulso"
+    },
+    "android": {
+      "package": "com.nativos.pulso",
+      "adaptiveIcon": { "backgroundColor": "#0A1628" }
+    },
+    "plugins": ["expo-router"],
+    "experiments": { "typedRoutes": true }
+  }
+}

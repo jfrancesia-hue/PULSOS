@@ -1,0 +1,506 @@
+// =====================================================================
+//  Pulso · Schema Prisma 7
+//  Plataforma de salud digital argentina · Nativos Consultora Digital
+// =====================================================================
+//  Notas:
+//   - URLs viven en prisma.config.ts (Prisma 7 — no en este archivo)
+//   - pgvector preparado para embeddings de Mica (search semántica)
+//   - AuditLog es append-only — protegido por triggers SQL en migration
+// =====================================================================
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters", "postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [pgcrypto, pg_trgm, vector]
+}
+
+// ---------------------------------------------------------------------
+//  Identidad y roles
+// ---------------------------------------------------------------------
+
+enum Role {
+  CIUDADANO
+  PROFESIONAL
+  FARMACIA
+  INSTITUCION
+  ADMIN
+  SUPERADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  PENDING_VERIFICATION
+  SUSPENDED
+  DELETED
+}
+
+model User {
+  id                String     @id @default(uuid()) @db.Uuid
+  email             String     @unique
+  passwordHash      String
+  role              Role       @default(CIUDADANO)
+  status            UserStatus @default(PENDING_VERIFICATION)
+  mfaEnabled        Boolean    @default(false)
+  mfaSecret         String?
+  emailVerifiedAt   DateTime?
+  lastLoginAt       DateTime?
+  failedLoginCount  Int        @default(0)
+  lockedUntil       DateTime?
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+
+  citizenProfile        CitizenProfile?
+  professionalProfile   ProfessionalProfile?
+  institutionMemberships InstitutionMembership[]
+  emergencyAccesses     EmergencyAccess[]
+  consentsGranted       Consent[]               @relation("CitizenConsents")
+  micaConversations     MicaConversation[]
+  refreshTokens         RefreshToken[]
+
+  @@index([role])
+  @@index([status])
+}
+
+model RefreshToken {
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String   @db.Uuid
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash   String   @unique
+  expiresAt   DateTime
+  revokedAt   DateTime?
+  userAgent   String?
+  ip          String?
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+// ---------------------------------------------------------------------
+//  Pulso ID — Perfil ciudadano
+// ---------------------------------------------------------------------
+
+enum SexoBiologico {
+  MASCULINO
+  FEMENINO
+  INTERSEXUAL
+}
+
+enum GeneroAutopercibido {
+  MASCULINO
+  FEMENINO
+  NO_BINARIO
+  OTRO
+  PREFIERE_NO_DECIR
+}
+
+enum ProvinciaAr {
+  CABA
+  BUENOS_AIRES
+  CATAMARCA
+  CHACO
+  CHUBUT
+  CORDOBA
+  CORRIENTES
+  ENTRE_RIOS
+  FORMOSA
+  JUJUY
+  LA_PAMPA
+  LA_RIOJA
+  MENDOZA
+  MISIONES
+  NEUQUEN
+  RIO_NEGRO
+  SALTA
+  SAN_JUAN
+  SAN_LUIS
+  SANTA_CRUZ
+  SANTA_FE
+  SANTIAGO_DEL_ESTERO
+  TIERRA_DEL_FUEGO
+  TUCUMAN
+}
+
+enum GrupoSanguineo {
+  A_POSITIVO
+  A_NEGATIVO
+  B_POSITIVO
+  B_NEGATIVO
+  AB_POSITIVO
+  AB_NEGATIVO
+  O_POSITIVO
+  O_NEGATIVO
+  DESCONOCIDO
+}
+
+enum CoberturaTipo {
+  OBRA_SOCIAL
+  PREPAGA
+  PUBLICA
+  NINGUNA
+}
+
+model CitizenProfile {
+  id                  String              @id @default(uuid()) @db.Uuid
+  userId              String              @unique @db.Uuid
+  user                User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dni                 String              @unique
+  cuil                String?             @unique
+  nombre              String
+  apellido            String
+  fechaNacimiento     DateTime            @db.Date
+  sexoBiologico       SexoBiologico
+  generoAutopercibido GeneroAutopercibido?
+  provincia           ProvinciaAr
+  localidad           String?
+  telefono            String?
+  contactoEmergencia  Json?
+  cobertura           Json?
+  grupoSanguineo      GrupoSanguineo      @default(DESCONOCIDO)
+  alergias            Json                @default("[]")
+  condicionesCriticas Json                @default("[]")
+  medicacionHabitual  Json                @default("[]")
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+
+  clinicalRecords  ClinicalRecord[]   @relation("CitizenClinicalRecords")
+  documents        ClinicalDocument[] @relation("CitizenDocuments")
+
+  @@index([dni])
+  @@index([provincia])
+}
+
+// ---------------------------------------------------------------------
+//  Profesionales e Instituciones
+// ---------------------------------------------------------------------
+
+enum EspecialidadMedica {
+  CLINICA_MEDICA
+  PEDIATRIA
+  GINECOLOGIA
+  CARDIOLOGIA
+  TRAUMATOLOGIA
+  DERMATOLOGIA
+  PSIQUIATRIA
+  NEUROLOGIA
+  CIRUGIA_GENERAL
+  EMERGENTOLOGIA
+  ANESTESIOLOGIA
+  RADIOLOGIA
+  OFTALMOLOGIA
+  OTORRINO
+  KINESIOLOGIA
+  BIOQUIMICA
+  ENFERMERIA
+  NUTRICION
+  ODONTOLOGIA
+  OTRA
+}
+
+model ProfessionalProfile {
+  id              String                @id @default(uuid()) @db.Uuid
+  userId          String                @unique @db.Uuid
+  user            User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  nombre          String
+  apellido        String
+  matriculaNacional String?
+  matriculaProvincial String?
+  provinciaMatricula  ProvinciaAr?
+  especialidades  EspecialidadMedica[]  @default([])
+  verificadoAt    DateTime?
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+
+  clinicalRecords ClinicalRecord[] @relation("ProfessionalClinicalRecords")
+  consentsAsActor Consent[]        @relation("ProfessionalConsents")
+
+  @@index([matriculaNacional])
+}
+
+enum InstitutionType {
+  HOSPITAL_PUBLICO
+  HOSPITAL_PRIVADO
+  CLINICA
+  CENTRO_SALUD
+  LABORATORIO
+  FARMACIA
+  OBRA_SOCIAL
+  PREPAGA
+  MINISTERIO
+  OTRO
+}
+
+model Institution {
+  id          String          @id @default(uuid()) @db.Uuid
+  cuit        String          @unique
+  razonSocial String
+  fantasyName String?
+  tipo        InstitutionType
+  provincia   ProvinciaAr
+  localidad   String?
+  direccion   String?
+  telefono    String?
+  email       String?
+  verificadoAt DateTime?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  memberships     InstitutionMembership[]
+  clinicalRecords ClinicalRecord[]        @relation("InstitutionClinicalRecords")
+  consents        Consent[]               @relation("InstitutionConsents")
+
+  @@index([provincia])
+  @@index([tipo])
+}
+
+model InstitutionMembership {
+  id            String      @id @default(uuid()) @db.Uuid
+  userId        String      @db.Uuid
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  institutionId String      @db.Uuid
+  institution   Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  rolEnInstitucion String
+  desde         DateTime    @default(now())
+  hasta         DateTime?
+
+  @@unique([userId, institutionId])
+  @@index([institutionId])
+}
+
+// ---------------------------------------------------------------------
+//  Pulso Emergency
+// ---------------------------------------------------------------------
+
+enum EmergencyTtl {
+  H_24
+  D_7
+  D_30
+  NUNCA
+}
+
+model EmergencyAccess {
+  id            String        @id @default(uuid()) @db.Uuid
+  userId        String        @db.Uuid
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token         String        @unique
+  ttl           EmergencyTtl  @default(H_24)
+  expiresAt     DateTime?
+  revokedAt     DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  logs EmergencyAccessLog[]
+
+  @@index([userId])
+  @@index([token])
+}
+
+model EmergencyAccessLog {
+  id                 String          @id @default(uuid()) @db.Uuid
+  emergencyAccessId  String          @db.Uuid
+  emergencyAccess    EmergencyAccess @relation(fields: [emergencyAccessId], references: [id], onDelete: Cascade)
+  accessedAt         DateTime        @default(now())
+  ip                 String?
+  userAgent          String?
+  geoApprox          String?
+  notifiedAt         DateTime?
+
+  @@index([emergencyAccessId])
+  @@index([accessedAt])
+}
+
+// ---------------------------------------------------------------------
+//  Pulso Clinical
+// ---------------------------------------------------------------------
+
+enum ClinicalEventType {
+  CONSULTA
+  EVOLUCION
+  ESTUDIO
+  INTERNACION
+  CIRUGIA
+  VACUNACION
+  RECETA
+  DERIVACION
+  OTRO
+}
+
+enum ClinicalDocumentType {
+  ESTUDIO_LAB
+  ESTUDIO_IMAGEN
+  RECETA
+  INDICACION
+  INFORME
+  CERTIFICADO
+  CONSENTIMIENTO
+  OTRO
+}
+
+model ClinicalRecord {
+  id              String              @id @default(uuid()) @db.Uuid
+  ciudadanoId     String              @db.Uuid
+  ciudadano       CitizenProfile      @relation("CitizenClinicalRecords", fields: [ciudadanoId], references: [id], onDelete: Cascade)
+  profesionalId   String?             @db.Uuid
+  profesional     ProfessionalProfile? @relation("ProfessionalClinicalRecords", fields: [profesionalId], references: [id], onDelete: SetNull)
+  institucionId   String?             @db.Uuid
+  institucion     Institution?        @relation("InstitutionClinicalRecords", fields: [institucionId], references: [id], onDelete: SetNull)
+  tipo            ClinicalEventType
+  titulo          String
+  descripcion     String?
+  ocurridoEn      DateTime
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  documentos ClinicalDocument[]
+
+  @@index([ciudadanoId, ocurridoEn(sort: Desc)])
+  @@index([profesionalId])
+  @@index([institucionId])
+}
+
+model ClinicalDocument {
+  id              String                @id @default(uuid()) @db.Uuid
+  ciudadanoId     String                @db.Uuid
+  ciudadano       CitizenProfile        @relation("CitizenDocuments", fields: [ciudadanoId], references: [id], onDelete: Cascade)
+  recordId        String?               @db.Uuid
+  record          ClinicalRecord?       @relation(fields: [recordId], references: [id], onDelete: SetNull)
+  tipo            ClinicalDocumentType
+  nombre          String
+  storageKey      String                @unique
+  mimeType        String
+  sizeBytes       Int
+  hashSha256      String
+  uploadedAt      DateTime              @default(now())
+  uploadedBy      String                @db.Uuid
+
+  @@index([ciudadanoId])
+  @@index([recordId])
+}
+
+// ---------------------------------------------------------------------
+//  Consentimientos
+// ---------------------------------------------------------------------
+
+enum ConsentScope {
+  PERFIL_BASICO
+  PERFIL_COMPLETO
+  TIMELINE_CLINICO
+  CARGA_EVOLUCION
+  EMERGENCIA
+}
+
+model Consent {
+  id              String              @id @default(uuid()) @db.Uuid
+  ciudadanoId     String              @db.Uuid
+  ciudadano       User                @relation("CitizenConsents", fields: [ciudadanoId], references: [id], onDelete: Cascade)
+  profesionalId   String?             @db.Uuid
+  profesional     ProfessionalProfile? @relation("ProfessionalConsents", fields: [profesionalId], references: [id], onDelete: SetNull)
+  institucionId   String?             @db.Uuid
+  institucion     Institution?        @relation("InstitutionConsents", fields: [institucionId], references: [id], onDelete: SetNull)
+  scopes          ConsentScope[]
+  motivo          String
+  grantedAt       DateTime            @default(now())
+  expiresAt       DateTime?
+  revokedAt       DateTime?
+
+  @@index([ciudadanoId, expiresAt])
+  @@index([profesionalId])
+}
+
+// ---------------------------------------------------------------------
+//  Pulso Mica (IA)
+// ---------------------------------------------------------------------
+
+enum MicaTriage {
+  INFORMATIVO
+  CONSULTA_NO_URGENTE
+  CONSULTA_PRIORITARIA
+  GUARDIA_INMEDIATA
+}
+
+model MicaConversation {
+  id            String         @id @default(uuid()) @db.Uuid
+  userId        String         @db.Uuid
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  startedAt     DateTime       @default(now())
+  endedAt       DateTime?
+  messageCount  Int            @default(0)
+  lastTriage    MicaTriage?
+  derivacion    String?
+  prescriptionFlagged Boolean  @default(false)
+
+  @@index([userId, startedAt(sort: Desc)])
+}
+
+// pgvector — búsqueda semántica de documentos clínicos para Mica
+model DocumentEmbedding {
+  id          String                 @id @default(uuid()) @db.Uuid
+  documentId  String                 @unique @db.Uuid
+  modelo      String
+  embedding   Unsupported("vector(1536)")
+  createdAt   DateTime               @default(now())
+}
+
+// ---------------------------------------------------------------------
+//  Audit log — append-only con hash chain SHA-256
+// ---------------------------------------------------------------------
+
+enum AuditAction {
+  AUTH_LOGIN_SUCCESS
+  AUTH_LOGIN_FAILURE
+  AUTH_LOGOUT
+  AUTH_MFA_CHALLENGE
+  AUTH_PASSWORD_RESET
+  PROFILE_VIEW
+  PROFILE_UPDATE
+  EMERGENCY_QR_GENERATED
+  EMERGENCY_QR_REVOKED
+  EMERGENCY_QR_ACCESSED
+  CLINICAL_RECORD_CREATED
+  CLINICAL_RECORD_UPDATED
+  CLINICAL_RECORD_VIEWED
+  CLINICAL_DOCUMENT_UPLOADED
+  CLINICAL_DOCUMENT_DOWNLOADED
+  CONSENT_GRANTED
+  CONSENT_REVOKED
+  CONSENT_EXPIRED
+  MICA_CONVERSATION_STARTED
+  MICA_PRESCRIPTION_BLOCKED
+  ADMIN_USER_SUSPENDED
+  ADMIN_USER_ROLE_CHANGED
+  ADMIN_AUDIT_VERIFIED
+  CONNECT_API_INVOKED
+}
+
+enum AuditOutcome {
+  SUCCESS
+  FAILURE
+  BLOCKED
+}
+
+model AuditLog {
+  id            String         @id @default(uuid()) @db.Uuid
+  occurredAt    DateTime       @default(now())
+  actorId       String?        @db.Uuid
+  actorRole     Role?
+  action        AuditAction
+  targetType    String?
+  targetId      String?
+  outcome       AuditOutcome
+  ip            String?
+  userAgent     String?
+  payloadHash   String         @db.Char(64)
+  previousHash  String         @db.Char(64)
+  currentHash   String         @unique @db.Char(64)
+  sequenceNum   BigInt         @unique @default(autoincrement())
+
+  @@index([actorId, occurredAt(sort: Desc)])
+  @@index([action])
+  @@index([occurredAt(sort: Desc)])
+  @@index([targetType, targetId])
+}

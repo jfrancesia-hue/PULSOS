@@ -1,0 +1,70 @@
+# Dependencias
+node_modules/
+.pnpm-store/
+
+# Builds
+dist/
+build/
+.next/
+.turbo/
+out/
+.expo/
+.expo-shared/
+
+# Tipos generados
+*.tsbuildinfo
+next-env.d.ts
+
+# Coverage
+coverage/
+.nyc_output/
+
+# Entornos (NUNCA commitear .env reales)
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Claves y secretos
+*.pem
+*.key
+*.crt
+secrets/
+.secrets/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Prisma
+prisma/migrations/dev_*
+
+# Mobile (Expo)
+*.jks
+*.p8
+*.p12
+*.mobileprovision
+*.orig.*
+
+# Misc
+.cache/
+.tmp/
+tmp/
+
+# Tooling local (oh-my-claudecode)
+.omc/
