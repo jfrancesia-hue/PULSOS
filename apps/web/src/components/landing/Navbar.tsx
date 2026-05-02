@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Logo, Button } from '@pulso/ui';
+import { ArrowRight } from 'lucide-react';
 
 const NAV_ITEMS = [
   { label: 'Plataforma', href: '#modulos' },
@@ -27,13 +28,19 @@ export function Navbar() {
             </Link>
           ))}
         </nav>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <Link href="/ingresar" className="hidden text-sm text-pulso-niebla transition-colors hover:text-pulso-turquesa lg:inline">
             Ingresar
           </Link>
-          <Link href="/demo">
-            <Button variant="cobre-pulse" size="sm">
-              Solicitar demo
+          <Link href="/demo" className="hidden sm:block">
+            <Button variant="outline" size="sm">
+              Demo institucional
+            </Button>
+          </Link>
+          <Link href="/registro">
+            <Button variant="cobre-pulse" size="sm" className="group shadow-glow-cobre">
+              Crear Pulso ID
+              <ArrowRight size={14} className="icon-bounce-hover" />
             </Button>
           </Link>
         </div>

@@ -53,19 +53,27 @@ export function Hero() {
             verificados y una capa de inteligencia preparada para transformar la salud en Argentina.
           </p>
 
-          <div className="mt-10 flex flex-col gap-4 sm:flex-row">
-            <Link href="/registro" className="group">
-              <Button variant="cobre-pulse" size="lg">
+          <div className="mt-10 flex flex-col items-start gap-5 sm:flex-row sm:items-center">
+            <Link href="/registro" className="group block w-full sm:w-auto">
+              <Button
+                variant="cobre-pulse"
+                size="lg"
+                className="h-16 w-full px-10 text-lg font-semibold tracking-wide shadow-glow-cobre sm:w-auto"
+              >
                 Crear mi Pulso ID
-                <ArrowRight size={16} className="icon-bounce-hover" />
+                <ArrowRight size={20} className="icon-bounce-hover" />
               </Button>
             </Link>
-            <Link href="/demo" className="group">
-              <Button variant="outline" size="lg">
-                <Sparkles size={16} className="icon-wobble" />
-                Demo institucional
-              </Button>
-            </Link>
+            <div className="flex flex-col gap-1.5 text-xs">
+              <Link href="/demo" className="group inline-flex items-center gap-2 text-pulso-niebla transition-colors hover:text-pulso-turquesa">
+                <Sparkles size={12} className="icon-wobble text-pulso-cobre" />
+                <span>¿Sos institución? Pedí una demo →</span>
+              </Link>
+              <span className="flex items-center gap-2 text-2xs uppercase tracking-[0.18em] text-pulso-niebla/70">
+                <span className="pulse-dot inline-block h-1.5 w-1.5 rounded-full bg-pulso-turquesa" />
+                Gratis · sin tarjeta · 3 minutos
+              </span>
+            </div>
           </div>
 
           <div className="mt-12 flex flex-wrap items-center gap-x-6 gap-y-3 text-xs text-pulso-niebla">

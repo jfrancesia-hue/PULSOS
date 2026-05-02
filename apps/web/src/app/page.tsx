@@ -8,6 +8,7 @@ import { MicaSection } from '@/components/landing/MicaSection';
 import { Ecosistema } from '@/components/landing/Ecosistema';
 import { CtaInstitucional } from '@/components/landing/CtaInstitucional';
 import { Footer } from '@/components/landing/Footer';
+import { FloatingCTA } from '@/components/landing/FloatingCTA';
 
 export default function HomePage() {
   return (
@@ -22,6 +23,7 @@ export default function HomePage() {
       <Ecosistema />
       <CtaInstitucional />
       <Footer />
+      <FloatingCTA />
     </main>
   );
 }
