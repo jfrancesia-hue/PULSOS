@@ -32,7 +32,7 @@ export const pulsoPreset: Partial<Config> = {
         sans: typography.fontFamily.body.split(','),
         mono: typography.fontFamily.mono.split(','),
       },
-      fontSize: typography.fontSize as Record<string, [string, { lineHeight: string }]>,
+      fontSize: typography.fontSize as unknown as Record<string, [string, { lineHeight: string }]>,
       borderRadius: radii,
       boxShadow: {
         'pulso-sm': shadows.sm,
