@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Logo, Badge } from '@pulso/ui';
 import { LayoutDashboard, Search, History, ShieldCheck, LogOut, Stethoscope } from 'lucide-react';
 import { requireRole } from '@/lib/session';
-import { logoutAction } from '../panel/actions';
+import { logoutAction } from '@/app/panel/actions';
 
 const NAV = [
   { href: '/portal-profesional/dashboard', label: 'Dashboard', icon: LayoutDashboard },

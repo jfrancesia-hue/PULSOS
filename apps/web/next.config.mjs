@@ -8,9 +8,7 @@ const nextConfig = {
       { protocol: 'https', hostname: 'cdn.pulso.ar' },
     ],
   },
-  experimental: {
-    typedRoutes: true,
-  },
+  typedRoutes: false,
 };
 
 export default nextConfig;

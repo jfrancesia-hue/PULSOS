@@ -30,7 +30,6 @@
     background-color: rgba(43, 212, 201, 0.35);
     color: var(--pulso-blanco-calido);
   }
-
   *:focus-visible {
     outline: 2px solid var(--pulso-turquesa);
     outline-offset: 2px;
@@ -45,18 +44,308 @@
     -webkit-backdrop-filter: blur(16px);
     border: 1px solid rgba(43, 212, 201, 0.15);
   }
-
   .pulso-topo {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Cg fill='none' stroke='rgba(43,212,201,0.06)' stroke-width='1'%3E%3Cpath d='M0,200 Q100,140 200,200 T400,200'/%3E%3Cpath d='M0,220 Q100,160 200,220 T400,220'/%3E%3Cpath d='M0,240 Q100,180 200,240 T400,240'/%3E%3Cpath d='M0,180 Q100,120 200,180 T400,180'/%3E%3Cpath d='M0,160 Q100,100 200,160 T400,160'/%3E%3C/g%3E%3C/svg%3E");
   }
 }
 
+/* ===================================================================
+   Pulso · Animations premium (compartidas web + admin + mobile)
+   =================================================================== */
+
+/* Stagger fade-in helper */
+.stagger > * { animation: staggerIn 0.4s ease-out both; }
+.stagger > *:nth-child(1) { animation-delay: 0.04s; }
+.stagger > *:nth-child(2) { animation-delay: 0.08s; }
+.stagger > *:nth-child(3) { animation-delay: 0.12s; }
+.stagger > *:nth-child(4) { animation-delay: 0.16s; }
+.stagger > *:nth-child(5) { animation-delay: 0.20s; }
+.stagger > *:nth-child(6) { animation-delay: 0.24s; }
+.stagger > *:nth-child(7) { animation-delay: 0.28s; }
+.stagger > *:nth-child(8) { animation-delay: 0.32s; }
+.stagger > *:nth-child(9) { animation-delay: 0.36s; }
+.stagger > *:nth-child(n+10) { animation-delay: 0.40s; }
+@keyframes staggerIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Shimmer para skeletons */
+.shimmer {
+  background: linear-gradient(90deg, rgba(255,255,255,0.02) 0%, rgba(43,212,201,0.10) 50%, rgba(255,255,255,0.02) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Heart-rate path animation */
+.pulse-line {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: pulseLine 3s ease-out forwards;
+}
+@keyframes pulseLine {
+  to { stroke-dashoffset: 0; }
+}
+
+/* Glow turquesa en hover */
+.glow-hover {
+  transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+}
+.glow-hover:hover {
+  box-shadow: 0 0 0 1px rgba(43, 212, 201, 0.30), 0 0 32px rgba(43, 212, 201, 0.15);
+  transform: translateY(-1px);
+}
+.glow-hover-cobre:hover {
+  box-shadow: 0 0 0 1px rgba(217, 120, 71, 0.30), 0 0 32px rgba(217, 120, 71, 0.15);
+}
+
+/* Pulse dot live indicator */
+.pulse-dot {
+  position: relative;
+}
+.pulse-dot::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  background: inherit;
+  opacity: 0.7;
+  animation: pulseRing 1.6s ease-out infinite;
+}
+@keyframes pulseRing {
+  0% { transform: scale(0.8); opacity: 0.7; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+
+/* Icon hover transformations */
+.icon-spin-hover {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.group:hover .icon-spin-hover,
+.icon-spin-hover:hover {
+  transform: rotate(6deg) scale(1.15);
+}
+
+.icon-bounce-hover {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.group:hover .icon-bounce-hover,
+.icon-bounce-hover:hover {
+  transform: translateY(-2px) scale(1.08);
+}
+
+.icon-wobble:hover {
+  animation: wobble 0.6s ease;
+}
+@keyframes wobble {
+  0%, 100% { transform: rotate(0deg); }
+  20%      { transform: rotate(-12deg); }
+  40%      { transform: rotate(8deg); }
+  60%      { transform: rotate(-6deg); }
+  80%      { transform: rotate(3deg); }
+}
+
+/* Tilt 3D cards */
+.tilt-3d {
+  transform-style: preserve-3d;
+  transform: perspective(1000px) rotateX(0) rotateY(0);
+  transition: transform 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
+  will-change: transform;
+}
+
+/* Border glow trace */
+.border-glow {
+  position: relative;
+  overflow: hidden;
+}
+.border-glow::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: conic-gradient(from 0deg, transparent, rgba(43,212,201,0.6), rgba(217,120,71,0.5), transparent 30%);
+  opacity: 0;
+  animation: borderTrace 4s linear infinite;
+  z-index: 0;
+  pointer-events: none;
+}
+.border-glow:hover::before { opacity: 1; }
+.border-glow > * {
+  position: relative;
+  z-index: 1;
+}
+@keyframes borderTrace {
+  to { transform: rotate(360deg); }
+}
+
+/* Glow pulse continuo en CTAs */
+.glow-pulse-cobre {
+  animation: glowPulseCobre 2.4s ease-in-out infinite;
+}
+@keyframes glowPulseCobre {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(217,120,71,0.4), 0 4px 16px rgba(217,120,71,0.25); }
+  50%      { box-shadow: 0 0 0 6px rgba(217,120,71,0), 0 4px 20px rgba(217,120,71,0.45); }
+}
+.glow-pulse-turquesa {
+  animation: glowPulseTurquesa 2.4s ease-in-out infinite;
+}
+@keyframes glowPulseTurquesa {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(43,212,201,0.4), 0 4px 16px rgba(43,212,201,0.25); }
+  50%      { box-shadow: 0 0 0 6px rgba(43,212,201,0), 0 4px 20px rgba(43,212,201,0.45); }
+}
+
+/* Press effect */
+.press {
+  transition: transform 0.1s ease;
+}
+.press:active {
+  transform: scale(0.96);
+}
+
+/* Ripple effect (CSS pure) */
+.ripple {
+  position: relative;
+  overflow: hidden;
+}
+.ripple::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 60%);
+  opacity: 0;
+  transform: scale(0);
+  pointer-events: none;
+  transition: transform 0.5s ease, opacity 0.5s ease;
+}
+.ripple:active::after {
+  opacity: 1;
+  transform: scale(2);
+  transition: transform 0s, opacity 0s;
+}
+
+/* Magnetic button (CSS variables seteadas por JS) */
+.magnetic {
+  --mx: 0;
+  --my: 0;
+  transition: transform 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+  transform: translate(calc(var(--mx) * 4px), calc(var(--my) * 4px));
+  will-change: transform;
+}
+
+/* Number flip */
+.number-flip {
+  display: inline-block;
+  animation: numberFlip 0.5s ease-out;
+}
+@keyframes numberFlip {
+  0%   { transform: translateY(8px); opacity: 0; }
+  60%  { transform: translateY(-3px); opacity: 1; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+/* Toast animations */
+.toast-enter {
+  animation: toastEnter 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+.toast-exit {
+  animation: toastExit 0.3s ease-in forwards;
+}
+@keyframes toastEnter {
+  from { transform: translateY(-100%) scale(0.9); opacity: 0; }
+  to   { transform: translateY(0) scale(1); opacity: 1; }
+}
+@keyframes toastExit {
+  to { transform: translateY(-100%) scale(0.9); opacity: 0; }
+}
+
+/* Page transition */
+.page-transition-in {
+  animation: pageIn 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Loading bar superior */
+.nav-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #2BD4C9 0%, #5EE7DE 50%, #D97847 100%);
+  transform-origin: left;
+  z-index: 100;
+  box-shadow: 0 0 12px rgba(43,212,201,0.5);
+}
+.nav-progress.loading {
+  animation: navProgress 2s ease-in-out infinite;
+}
+@keyframes navProgress {
+  0%   { transform: scaleX(0); }
+  50%  { transform: scaleX(0.7); }
+  100% { transform: scaleX(1); }
+}
+
+/* Sparkle decoration */
+.sparkle {
+  position: relative;
+}
+.sparkle::after {
+  content: '✦';
+  position: absolute;
+  top: -3px;
+  right: -8px;
+  font-size: 8px;
+  color: var(--pulso-cobre);
+  opacity: 0;
+  transform: scale(0);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.group:hover .sparkle::after,
+.sparkle:hover::after {
+  opacity: 1;
+  transform: scale(1) rotate(20deg);
+}
+
+/* Quick action slide-in en filas */
+.row-actions {
+  opacity: 0;
+  transform: translateX(8px);
+  transition: opacity 0.2s, transform 0.2s;
+  pointer-events: none;
+}
+tr:hover .row-actions,
+.group:hover .row-actions {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+/* Bento grid */
+.bento {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 16px;
+}
+@media (max-width: 1024px) {
+  .bento { grid-template-columns: repeat(6, 1fr); }
+}
+@media (max-width: 640px) {
+  .bento { grid-template-columns: repeat(2, 1fr); }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+  .tilt-3d, .magnetic { transform: none !important; }
 }

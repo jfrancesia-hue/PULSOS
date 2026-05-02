@@ -108,8 +108,15 @@ export function SignupForm() {
         </div>
       ) : null}
 
-      <Button type="submit" variant="primary" size="lg" className="w-full" disabled={pending}>
-        <UserPlus size={16} />
+      <Button
+        type="submit"
+        variant="cobre-pulse"
+        size="lg"
+        className="group w-full"
+        loading={pending}
+        disabled={pending}
+      >
+        {!pending ? <UserPlus size={16} className="icon-bounce-hover" /> : null}
         {pending ? 'Creando cuenta…' : 'Crear Pulso ID'}
       </Button>
 

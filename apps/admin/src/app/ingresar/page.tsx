@@ -11,20 +11,36 @@ export default function AdminLogin() {
       <div className="relative hidden overflow-hidden lg:block">
         <div className="absolute inset-0 bg-pulso-gradient" />
         <div className="pulso-topo absolute inset-0 opacity-50" />
+        <div
+          className="pointer-events-none absolute -top-32 -left-32 h-[500px] w-[500px] rounded-full bg-pulso-cobre/20 blur-3xl"
+          aria-hidden="true"
+        />
+        <div
+          className="pointer-events-none absolute -bottom-32 -right-32 h-[400px] w-[400px] rounded-full bg-pulso-turquesa/15 blur-3xl"
+          aria-hidden="true"
+        />
         <div className="relative flex h-full flex-col justify-between p-12">
           <Logo variant="full" size="lg" className="text-pulso-blanco-calido" />
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-md border border-pulso-turquesa/30 bg-pulso-turquesa/10 px-3 py-1 text-xs font-semibold text-pulso-turquesa">
-              <ShieldCheck size={12} />
+          <div className="stagger">
+            <div className="inline-flex items-center gap-2 rounded-md border border-pulso-cobre/30 bg-pulso-cobre/10 px-3 py-1 text-xs font-semibold text-pulso-cobre">
+              <ShieldCheck size={12} className="icon-wobble" />
               Acceso restringido
             </div>
             <h1 className="mt-6 font-display text-4xl font-bold tracking-tight">
-              Panel administrativo institucional
+              Panel administrativo
+              <br />
+              <span className="bg-gradient-to-r from-pulso-cobre to-pulso-turquesa bg-clip-text text-transparent">
+                institucional
+              </span>
             </h1>
             <p className="mt-4 max-w-sm text-pulso-niebla">
               MFA obligatorio para roles ADMIN y SUPERADMIN. Cada acción queda en el log de
               auditoría.
             </p>
+            <div className="mt-8 flex items-center gap-3 text-xs text-pulso-niebla">
+              <span className="pulse-dot inline-block h-2 w-2 rounded-full bg-pulso-cobre" />
+              <span className="font-mono uppercase tracking-[0.2em]">Audit log activo · SHA-256</span>
+            </div>
           </div>
           <div className="text-xs text-pulso-niebla">© {new Date().getFullYear()} Nativos Consultora Digital</div>
         </div>

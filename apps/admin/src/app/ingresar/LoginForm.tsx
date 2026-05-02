@@ -39,9 +39,16 @@ export function LoginForm() {
           {error}
         </div>
       ) : null}
-      <Button type="submit" variant="primary" size="lg" className="w-full" disabled={pending}>
-        <LogIn size={16} />
-        {pending ? 'Ingresando…' : 'Ingresar'}
+      <Button
+        type="submit"
+        variant="cobre-pulse"
+        size="lg"
+        className="group w-full"
+        loading={pending}
+        disabled={pending}
+      >
+        {!pending ? <LogIn size={16} className="icon-bounce-hover" /> : null}
+        {pending ? 'Ingresando…' : 'Ingresar al panel'}
       </Button>
     </form>
   );

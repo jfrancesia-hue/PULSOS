@@ -10,11 +10,19 @@ export default function IngresarPage() {
       <div className="relative hidden overflow-hidden lg:block">
         <div className="absolute inset-0 bg-pulso-gradient" />
         <div className="pulso-topo absolute inset-0 opacity-50" aria-hidden="true" />
+        <div
+          className="pointer-events-none absolute -top-32 -left-32 h-[500px] w-[500px] rounded-full bg-pulso-turquesa/20 blur-3xl"
+          aria-hidden="true"
+        />
+        <div
+          className="pointer-events-none absolute -bottom-32 -right-32 h-[400px] w-[400px] rounded-full bg-pulso-cobre/15 blur-3xl"
+          aria-hidden="true"
+        />
         <div className="relative flex h-full flex-col justify-between p-12">
-          <Link href="/">
+          <Link href="/" className="w-fit">
             <Logo variant="full" size="lg" className="text-pulso-blanco-calido" />
           </Link>
-          <div>
+          <div className="stagger">
             <h1 className="font-display text-5xl font-bold leading-tight tracking-tight">
               Tu salud.
               <br />
@@ -26,6 +34,10 @@ export default function IngresarPage() {
               Una plataforma de Nativos Consultora Digital para conectar personas, profesionales e
               instituciones del sistema de salud argentino.
             </p>
+            <div className="mt-8 flex items-center gap-3 text-xs text-pulso-niebla">
+              <span className="pulse-dot inline-block h-2 w-2 rounded-full bg-pulso-turquesa" />
+              <span className="font-mono uppercase tracking-[0.2em]">Sistema operativo · 99.9%</span>
+            </div>
           </div>
           <div className="text-xs text-pulso-niebla">
             © {new Date().getFullYear()} Nativos Consultora Digital
@@ -58,11 +70,14 @@ export default function IngresarPage() {
           </div>
 
           <div className="mt-6 flex items-center justify-between text-xs text-pulso-niebla">
-            <Link href="/recuperar-contrasena" className="hover:text-pulso-turquesa">
+            <Link href="/recuperar-contrasena" className="transition-colors hover:text-pulso-turquesa">
               ¿Olvidaste tu contraseña?
             </Link>
-            <Link href="/registro" className="text-pulso-turquesa hover:underline">
-              Crear Pulso ID
+            <Link
+              href="/registro"
+              className="font-medium text-pulso-cobre transition-colors hover:text-pulso-cobre-deep hover:underline"
+            >
+              Crear Pulso ID →
             </Link>
           </div>
         </div>

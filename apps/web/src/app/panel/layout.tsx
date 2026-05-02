@@ -1,35 +1,8 @@
 import Link from 'next/link';
 import { Logo, Badge } from '@pulso/ui';
-import {
-  IdCard,
-  QrCode,
-  History,
-  FileText,
-  ShieldCheck,
-  Sparkles,
-  LayoutDashboard,
-  LogOut,
-  Bell,
-  Pill,
-  AlarmClock,
-  Lock,
-} from 'lucide-react';
 import { requireUser } from '@/lib/session';
-import { logoutAction } from './actions';
-
-const NAV = [
-  { href: '/panel', label: 'Inicio', icon: LayoutDashboard },
-  { href: '/panel/perfil', label: 'Mi perfil', icon: IdCard },
-  { href: '/panel/qr', label: 'QR emergencia', icon: QrCode },
-  { href: '/panel/recetas', label: 'Recetas', icon: Pill },
-  { href: '/panel/recordatorios', label: 'Recordatorios', icon: AlarmClock },
-  { href: '/panel/historial', label: 'Historial', icon: History },
-  { href: '/panel/documentos', label: 'Documentos', icon: FileText },
-  { href: '/panel/consentimientos', label: 'Consentimientos', icon: ShieldCheck },
-  { href: '/panel/notificaciones', label: 'Notificaciones', icon: Bell },
-  { href: '/panel/mica', label: 'Mica', icon: Sparkles },
-  { href: '/panel/seguridad', label: 'Seguridad', icon: Lock },
-];
+import { PanelNav } from './PanelNav';
+import { LogoutButton } from './LogoutButton';
 
 export default async function PanelLayout({ children }: { children: React.ReactNode }) {
   const user = await requireUser();
@@ -43,59 +16,42 @@ export default async function PanelLayout({ children }: { children: React.ReactN
 
   return (
     <div className="flex min-h-screen bg-pulso-azul-medianoche">
-      <aside className="fixed inset-y-0 left-0 z-30 flex w-64 flex-col border-r border-white/5 bg-pulso-azul-medianoche/95">
+      <aside className="fixed inset-y-0 left-0 z-30 flex w-64 flex-col border-r border-white/5 bg-pulso-azul-medianoche/95 backdrop-blur-xl">
         <div className="border-b border-white/5 px-5 py-5">
-          <Link href="/">
+          <Link href="/" className="block">
             <Logo variant="full" size="md" className="text-pulso-blanco-calido" />
           </Link>
+          <div className="mt-3 flex items-center gap-2 text-2xs uppercase tracking-[0.18em] text-pulso-niebla">
+            <span className="pulse-dot inline-block h-1.5 w-1.5 rounded-full bg-pulso-turquesa" />
+            <span>Panel ciudadano</span>
+          </div>
         </div>
 
-        <nav className="flex-1 space-y-1 px-3 py-5">
-          {NAV.map((item) => {
-            const Icon = item.icon;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm text-pulso-niebla transition-colors hover:bg-white/[0.03] hover:text-pulso-blanco-calido"
-              >
-                <Icon size={16} strokeWidth={1.6} />
-                <span>{item.label}</span>
-              </Link>
-            );
-          })}
-        </nav>
+        <PanelNav />
 
         <div className="border-t border-white/5 p-3">
-          <div className="flex items-center gap-3 rounded-md bg-white/[0.02] px-3 py-2.5">
-            <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-pulso-turquesa/20 text-xs font-semibold text-pulso-turquesa">
+          <div className="group flex items-center gap-3 rounded-md border border-white/5 bg-white/[0.02] px-3 py-2.5 transition-all hover:border-pulso-turquesa/30 hover:bg-white/[0.04]">
+            <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-pulso-turquesa/30 to-pulso-cobre/20 text-xs font-semibold text-pulso-turquesa shadow-[inset_0_0_0_1px_rgba(43,212,201,0.25)]">
               {initials.toUpperCase()}
             </div>
             <div className="min-w-0 flex-1">
               <div className="truncate text-sm font-medium">{display}</div>
               <div className="truncate text-xs text-pulso-niebla">{user.role.toLowerCase()}</div>
             </div>
-            <form action={logoutAction}>
-              <button
-                type="submit"
-                className="rounded-md p-1.5 text-pulso-niebla hover:bg-white/[0.05] hover:text-danger"
-                aria-label="Cerrar sesión"
-              >
-                <LogOut size={14} />
-              </button>
-            </form>
+            <LogoutButton />
           </div>
         </div>
       </aside>
 
       <div className="ml-64 flex-1">
         <header className="sticky top-0 z-20 flex items-center justify-between border-b border-white/5 bg-pulso-azul-medianoche/80 px-8 py-4 backdrop-blur-xl">
-          <div className="text-sm text-pulso-niebla">
+          <div className="flex items-center gap-3 text-sm text-pulso-niebla">
+            <span className="pulse-dot inline-block h-2 w-2 rounded-full bg-pulso-turquesa" />
             Sesión iniciada — los accesos a tus datos quedan registrados.
           </div>
           <Badge variant="success">Pulso activo</Badge>
         </header>
-        <main className="px-8 py-8">{children}</main>
+        <main className="page-transition-in px-8 py-8">{children}</main>
       </div>
     </div>
   );

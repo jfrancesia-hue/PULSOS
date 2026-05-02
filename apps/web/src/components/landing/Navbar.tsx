@@ -21,18 +21,18 @@ export function Navbar() {
             <Link
               key={item.href}
               href={item.href}
-              className="transition-colors hover:text-pulso-turquesa"
+              className="relative transition-colors hover:text-pulso-turquesa after:absolute after:bottom-[-6px] after:left-0 after:h-px after:w-0 after:bg-pulso-turquesa after:transition-all hover:after:w-full"
             >
               {item.label}
             </Link>
           ))}
         </nav>
         <div className="flex items-center gap-3">
-          <Link href="/ingresar" className="hidden text-sm text-pulso-niebla hover:text-pulso-turquesa lg:inline">
+          <Link href="/ingresar" className="hidden text-sm text-pulso-niebla transition-colors hover:text-pulso-turquesa lg:inline">
             Ingresar
           </Link>
           <Link href="/demo">
-            <Button variant="primary" size="sm">
+            <Button variant="cobre-pulse" size="sm">
               Solicitar demo
             </Button>
           </Link>

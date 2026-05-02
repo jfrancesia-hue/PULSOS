@@ -54,15 +54,15 @@ export function Hero() {
           </p>
 
           <div className="mt-10 flex flex-col gap-4 sm:flex-row">
-            <Link href="/registro">
-              <Button variant="primary" size="lg">
+            <Link href="/registro" className="group">
+              <Button variant="cobre-pulse" size="lg">
                 Crear mi Pulso ID
-                <ArrowRight size={16} />
+                <ArrowRight size={16} className="icon-bounce-hover" />
               </Button>
             </Link>
-            <Link href="/demo">
-              <Button variant="cobre" size="lg">
-                <Sparkles size={16} />
+            <Link href="/demo" className="group">
+              <Button variant="outline" size="lg">
+                <Sparkles size={16} className="icon-wobble" />
                 Demo institucional
               </Button>
             </Link>
@@ -111,7 +111,7 @@ function HeroVisual3D() {
       <div className="relative w-full max-w-md">
         <div className="absolute inset-0 -z-10 rounded-3xl bg-gradient-to-br from-pulso-turquesa/40 via-transparent to-pulso-cobre/30 blur-3xl" />
 
-        <div className="pulso-glass relative animate-pulse-glow rounded-3xl border-pulso-turquesa/30 p-1 shadow-pulso-xl">
+        <div className="pulso-glass border-glow tilt-3d relative animate-pulse-glow rounded-3xl border-pulso-turquesa/30 p-1 shadow-pulso-xl">
           <div className="rounded-[22px] bg-pulso-azul-medianoche p-6">
             <div className="flex items-center justify-between border-b border-white/5 pb-4">
               <div className="flex items-center gap-3">
@@ -167,12 +167,12 @@ function HeroVisual3D() {
               <DataRow icon="℞" label="Enalapril 10mg" sub="1 cada 12 horas" badge="Habitual" badgeVariant="turquesa" />
             </div>
 
-            <button className="mt-4 flex w-full items-center justify-between rounded-md border border-pulso-turquesa/20 bg-pulso-turquesa/5 px-4 py-2.5 text-xs text-pulso-turquesa transition-colors hover:bg-pulso-turquesa/10">
+            <button className="press ripple group mt-4 flex w-full items-center justify-between rounded-md border border-pulso-turquesa/20 bg-pulso-turquesa/5 px-4 py-2.5 text-xs text-pulso-turquesa transition-colors hover:bg-pulso-turquesa/10">
               <span className="flex items-center gap-2">
-                <Sparkles size={12} />
+                <Sparkles size={12} className="icon-wobble" />
                 Hablar con Mica sobre tu medicación
               </span>
-              <ChevronRight size={12} />
+              <ChevronRight size={12} className="icon-bounce-hover" />
             </button>
           </div>
         </div>
@@ -196,8 +196,8 @@ function HeroVisual3D() {
 function Chip({ icon, label, cobre = false }: { icon: string; label: string; cobre?: boolean }) {
   return (
     <div
-      className={`flex flex-col items-center gap-1 rounded-lg border p-2.5 text-center transition-all hover:scale-105 ${
-        cobre ? 'border-pulso-cobre/20 bg-pulso-cobre/5' : 'border-white/5 bg-white/[0.02]'
+      className={`press flex flex-col items-center gap-1 rounded-lg border p-2.5 text-center transition-all hover:scale-105 hover:-translate-y-0.5 ${
+        cobre ? 'border-pulso-cobre/20 bg-pulso-cobre/5 hover:border-pulso-cobre/40' : 'border-white/5 bg-white/[0.02] hover:border-pulso-turquesa/30'
       }`}
     >
       <span className="text-lg">{icon}</span>

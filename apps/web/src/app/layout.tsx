@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from 'next';
 import { Manrope, Inter } from 'next/font/google';
 import './globals.css';
+import { CursorOrb } from '@/components/premium/CursorOrb';
+import { NavigationProgress } from '@/components/premium/NavigationProgress';
 
 const manrope = Manrope({
   subsets: ['latin'],
@@ -42,6 +44,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="es-AR" className={`${manrope.variable} ${inter.variable}`}>
       <body className="min-h-screen bg-pulso-azul-profundo text-pulso-blanco-calido antialiased">
+        <NavigationProgress />
+        <CursorOrb />
         {children}
       </body>
     </html>
