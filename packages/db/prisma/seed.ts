@@ -17,7 +17,16 @@ import { randomUUID, createHash, scryptSync, randomBytes } from 'node:crypto';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient, Role } from '@prisma/client';
 
-const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL ?? '' });
+// Supabase usa SSL self-signed; PrismaPg acepta ssl config bajo poolConfig.
+const url = new URL(process.env.DATABASE_URL ?? '');
+const adapter = new PrismaPg({
+  host: url.hostname,
+  port: Number(url.port || '5432'),
+  user: decodeURIComponent(url.username),
+  password: decodeURIComponent(url.password),
+  database: url.pathname.replace(/^\//, '') || 'postgres',
+  ssl: { rejectUnauthorized: false },
+});
 const prisma = new PrismaClient({ adapter });
 
 const GENESIS_HASH = '0'.repeat(64);

@@ -17,7 +17,7 @@ export interface PushPayload {
 @Injectable()
 export class PushDispatcher implements OnModuleInit {
   private readonly logger = new Logger('Push');
-  private expo: Expo;
+  private expo!: Expo;
 
   onModuleInit() {
     const accessToken = process.env.EXPO_ACCESS_TOKEN;

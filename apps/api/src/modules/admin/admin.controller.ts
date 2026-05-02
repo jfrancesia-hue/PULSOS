@@ -159,7 +159,7 @@ export class AdminController {
       targetType: 'AuditLog',
       targetId: null,
       outcome: result.ok ? 'SUCCESS' : 'FAILURE',
-      payload: result,
+      payload: { ok: result.ok, totalChecked: result.totalChecked, brokenAt: result.brokenAt ?? null },
     });
     return result;
   }

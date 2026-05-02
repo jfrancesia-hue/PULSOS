@@ -24,31 +24,19 @@ export interface MicaInvokeOptions {
 export async function invokeMica(opts: MicaInvokeOptions): Promise<MicaResponse> {
   const model = opts.model ?? process.env.ANTHROPIC_MODEL ?? 'claude-sonnet-4-6';
 
-  const systemBlocks: Anthropic.TextBlockParam[] = [
-    {
-      type: 'text',
-      text: MICA_SYSTEM_PROMPT,
-      cache_control: { type: 'ephemeral' },
-    },
-  ];
-  if (opts.citizenContext) {
-    systemBlocks.push({
-      type: 'text',
-      text: `# Contexto del ciudadano (autorizado)\n${opts.citizenContext}`,
-      cache_control: { type: 'ephemeral' },
-    });
-  }
+  const systemText = opts.citizenContext
+    ? `${MICA_SYSTEM_PROMPT}\n\n# Contexto del ciudadano (autorizado)\n${opts.citizenContext}`
+    : MICA_SYSTEM_PROMPT;
 
   const messages: Anthropic.MessageParam[] = opts.conversation
-    .filter((m) => m.role !== 'system')
+    .filter((m): m is MicaMessage & { role: 'user' | 'assistant' } => m.role !== 'system')
     .map((m) => ({ role: m.role, content: m.content }));
 
   const response = await getClient().messages.create({
     model,
-    system: systemBlocks,
+    system: systemText,
     messages,
     max_tokens: 1024,
-    metadata: { user_id: 'mica' },
   });
 
   const text = response.content

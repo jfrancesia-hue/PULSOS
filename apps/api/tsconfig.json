@@ -5,15 +5,26 @@
     "moduleResolution": "node",
     "target": "ES2022",
     "outDir": "./dist",
-    "rootDir": "./src",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "incremental": true,
     "declaration": false,
     "noEmit": false,
     "verbatimModuleSyntax": false,
-    "types": ["node", "jest"]
+    "skipLibCheck": true,
+    "types": ["node", "jest"],
+    "paths": {
+      "@pulso/types": ["../../packages/types/src/index.ts"],
+      "@pulso/types/*": ["../../packages/types/src/*"],
+      "@pulso/ui": ["../../packages/ui/src/index.ts"],
+      "@pulso/db": ["../../packages/db/src/index.ts"],
+      "@pulso/auth": ["../../packages/auth/src/index.ts"],
+      "@pulso/audit": ["../../packages/audit/src/index.ts"],
+      "@pulso/ai": ["../../packages/ai/src/index.ts"],
+      "@pulso/notifications": ["../../packages/notifications/src/index.ts"],
+      "@pulso/integrations": ["../../packages/integrations/src/index.ts"]
+    }
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "../../packages/*/src/**/*"],
   "exclude": ["node_modules", "dist", "test"]
 }

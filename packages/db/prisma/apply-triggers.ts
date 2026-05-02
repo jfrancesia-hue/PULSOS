@@ -20,7 +20,16 @@ async function main() {
     process.exit(1);
   }
 
-  const client = new pg.Client({ connectionString: url });
+  // Parseamos URL manual para controlar SSL (Supabase usa self-signed cert).
+  const u = new URL(url);
+  const client = new pg.Client({
+    host: u.hostname,
+    port: Number(u.port || '5432'),
+    user: decodeURIComponent(u.username),
+    password: decodeURIComponent(u.password),
+    database: u.pathname.replace(/^\//, '') || 'postgres',
+    ssl: { rejectUnauthorized: false },
+  });
   await client.connect();
 
   for (const file of SQL_FILES) {

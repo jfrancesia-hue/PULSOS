@@ -53,10 +53,10 @@ export class AuditService {
       currentHash: r.currentHash,
       payloadHash: r.payloadHash,
       actorId: r.actorId,
-      action: r.action as string,
+      action: r.action as never,
       targetType: r.targetType,
       targetId: r.targetId,
-      outcome: r.outcome as string,
+      outcome: r.outcome as never,
       occurredAt: r.occurredAt.toISOString(),
     }));
     const expectedFirstPrev = rows[0]
