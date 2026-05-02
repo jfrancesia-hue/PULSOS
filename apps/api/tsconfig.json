@@ -16,7 +16,6 @@
     "paths": {
       "@pulso/types": ["../../packages/types/src/index.ts"],
       "@pulso/types/*": ["../../packages/types/src/*"],
-      "@pulso/ui": ["../../packages/ui/src/index.ts"],
       "@pulso/db": ["../../packages/db/src/index.ts"],
       "@pulso/auth": ["../../packages/auth/src/index.ts"],
       "@pulso/audit": ["../../packages/audit/src/index.ts"],
@@ -25,6 +24,15 @@
       "@pulso/integrations": ["../../packages/integrations/src/index.ts"]
     }
   },
-  "include": ["src/**/*", "../../packages/*/src/**/*"],
+  "include": [
+    "src/**/*",
+    "../../packages/types/src/**/*",
+    "../../packages/db/src/**/*",
+    "../../packages/auth/src/**/*",
+    "../../packages/audit/src/**/*",
+    "../../packages/ai/src/**/*",
+    "../../packages/notifications/src/**/*",
+    "../../packages/integrations/src/**/*"
+  ],
   "exclude": ["node_modules", "dist", "test"]
 }

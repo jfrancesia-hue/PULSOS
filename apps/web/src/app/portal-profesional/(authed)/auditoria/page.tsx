@@ -1,17 +1,8 @@
 import { Card, CardHeader, CardTitle, CardDescription, Badge } from '@pulso/ui';
 import { History } from 'lucide-react';
+import type { AuditEntry } from '@pulso/types';
 import { requireRole } from '@/lib/session';
 import { apiFetchAuthed } from '@/lib/api';
-
-interface AuditEntry {
-  id: string;
-  occurredAt: string;
-  action: string;
-  targetType: string | null;
-  targetId: string | null;
-  outcome: string;
-  ip: string | null;
-}
 
 const ACTION_LABEL: Record<string, string> = {
   AUTH_LOGIN_SUCCESS: 'Inicio de sesión',
@@ -24,7 +15,7 @@ const ACTION_LABEL: Record<string, string> = {
 export default async function AuditoriaPro() {
   const user = await requireRole(['PROFESIONAL'], '/portal-profesional/ingresar');
   const res = await apiFetchAuthed<AuditEntry[]>('/admin/audit?limit=100');
-  const events = res.ok ? res.data.filter((e) => e.actorId === user.id || true).slice(0, 50) : [];
+  const events = res.ok ? res.data.filter((e) => e.actorId === user.id).slice(0, 50) : [];
 
   return (
     <div className="space-y-8">
@@ -62,8 +53,8 @@ export default async function AuditoriaPro() {
                     {ACTION_LABEL[e.action] ?? e.action}
                   </div>
                   <div className="mt-0.5 text-xs text-pulso-niebla">
-                    {e.targetType ? `${e.targetType}` : 'Sistema'}
-                    {e.ip ? ` · ${e.ip}` : ''}
+                    {e.targetType ?? 'Sistema'}
+                    {e.targetId ? ` · ${e.targetId.slice(0, 8)}` : ''}
                   </div>
                 </div>
                 <div className="text-right">

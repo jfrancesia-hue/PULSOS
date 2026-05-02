@@ -4,29 +4,7 @@ import { useState, useTransition } from 'react';
 import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardDescription, Button, Input, Badge } from '@pulso/ui';
 import { Search, AlertTriangle, ShieldCheck } from 'lucide-react';
-import { searchAction, requestConsentAction } from './actions';
-
-interface SearchHit {
-  found: boolean;
-  consent_required?: boolean;
-  reason?: 'NOT_FOUND';
-  ciudadano?: {
-    id: string;
-    dni?: string;
-    nombre: string;
-    apellido?: string;
-    inicial?: string;
-    grupoSanguineo?: string;
-    alergias?: Array<{ sustancia: string; severidad: string }>;
-    condicionesCriticas?: Array<{ nombre: string }>;
-    medicacionHabitual?: Array<{ nombre: string }>;
-  };
-  consent?: {
-    id: string;
-    scopes: string[];
-    expiresAt: string | null;
-  };
-}
+import { searchAction, requestConsentAction, type SearchHit } from './actions';
 
 export function SearchForm() {
   const [dni, setDni] = useState('');
