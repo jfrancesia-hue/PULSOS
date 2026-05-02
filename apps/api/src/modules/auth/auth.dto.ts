@@ -15,12 +15,15 @@ export class SignupDto {
   @IsEmail()
   email!: string;
 
-  @ApiProperty({ example: 'Pulso2026Fuerte!', minLength: 12 })
-  @IsString()
-  @MinLength(12)
-  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{12,}$/, {
-    message: 'La contraseña debe tener al menos 12 caracteres, una minúscula, una mayúscula y un dígito.',
+  @ApiProperty({
+    example: 'salud-perro-azul-7',
+    minLength: 8,
+    description:
+      'Mínimo 8 caracteres. No exigimos mezcla de mayúsculas/dígitos (NIST 2017). Sugerido: passphrase memorable.',
   })
+  @IsString()
+  @MinLength(8, { message: 'La contraseña debe tener al menos 8 caracteres.' })
+  @MaxLength(128, { message: 'La contraseña no puede exceder 128 caracteres.' })
   password!: string;
 
   @ApiProperty({ example: 'Ana' }) @IsString() @MinLength(1) @MaxLength(120)
@@ -96,20 +99,20 @@ export class ResetPasswordDto {
   @IsString()
   token!: string;
 
-  @ApiProperty({ minLength: 12 })
+  @ApiProperty({ minLength: 8 })
   @IsString()
-  @MinLength(12)
-  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{12,}$/)
+  @MinLength(8, { message: 'La contraseña debe tener al menos 8 caracteres.' })
+  @MaxLength(128)
   newPassword!: string;
 }
 
 export class ChangePasswordDto {
   @ApiProperty() @IsString() currentPassword!: string;
 
-  @ApiProperty({ minLength: 12 })
+  @ApiProperty({ minLength: 8 })
   @IsString()
-  @MinLength(12)
-  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{12,}$/)
+  @MinLength(8, { message: 'La contraseña debe tener al menos 8 caracteres.' })
+  @MaxLength(128)
   newPassword!: string;
 }
 

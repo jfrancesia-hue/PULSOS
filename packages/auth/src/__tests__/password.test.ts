@@ -14,11 +14,16 @@ describe('password', () => {
     expect(await verifyPassword('Otra2026!Distinta', hash)).toBe(false);
   });
 
-  it('hashPassword rechaza passwords cortas (<12 chars)', async () => {
-    await expect(hashPassword('corta')).rejects.toThrow(/al menos 12/);
+  it('hashPassword rechaza passwords cortas (<8 chars)', async () => {
+    await expect(hashPassword('corta')).rejects.toThrow(/al menos 8/);
   });
 
-  it('isStrongPassword exige mayúsculas, minúsculas y dígitos con 12+', () => {
+  it('hashPassword acepta passphrase memorable de 8+ chars (NIST 2017)', async () => {
+    const hash = await hashPassword('casa-azul-7');
+    expect(hash.startsWith('$2')).toBe(true);
+  });
+
+  it('isStrongPassword exige mayúsculas, minúsculas y dígitos con 12+ (gating institucional)', () => {
     expect(isStrongPassword('Pulso2026Fuer!')).toBe(true);
     expect(isStrongPassword('todominusculas')).toBe(false);
     expect(isStrongPassword('TODOMAYUSCULAS123')).toBe(false);

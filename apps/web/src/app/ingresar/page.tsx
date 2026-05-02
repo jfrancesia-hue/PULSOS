@@ -69,10 +69,8 @@ export default function IngresarPage() {
             <div className="mt-2">Contraseña común: <span className="font-mono">Pulso2026!</span></div>
           </div>
 
-          <div className="mt-6 flex items-center justify-between text-xs text-pulso-niebla">
-            <Link href="/recuperar-contrasena" className="transition-colors hover:text-pulso-turquesa">
-              ¿Olvidaste tu contraseña?
-            </Link>
+          <div className="mt-6 text-center text-xs text-pulso-niebla">
+            ¿Todavía no tenés cuenta?{' '}
             <Link
               href="/registro"
               className="font-medium text-pulso-cobre transition-colors hover:text-pulso-cobre-deep hover:underline"

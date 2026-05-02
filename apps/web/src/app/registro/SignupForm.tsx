@@ -3,7 +3,9 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button, Input } from '@pulso/ui';
-import { UserPlus } from 'lucide-react';
+import { Sparkles, UserPlus } from 'lucide-react';
+import { PasswordInput } from '@/components/PasswordInput';
+import { generatePassphrase } from '@/lib/passphrase';
 import { signupAction } from './actions';
 
 const PROVINCIAS = [
@@ -17,6 +19,11 @@ export function SignupForm() {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [password, setPassword] = useState('');
+
+  function suggestPassword() {
+    setPassword(generatePassphrase());
+  }
 
   function handleSubmit(formData: FormData) {
     setError(null);
@@ -35,15 +42,37 @@ export function SignupForm() {
     <form action={handleSubmit} className="space-y-4">
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Nombre">
-          <Input name="nombre" required minLength={1} maxLength={120} placeholder="Ana" />
+          <Input
+            name="nombre"
+            required
+            minLength={1}
+            maxLength={120}
+            autoComplete="given-name"
+            placeholder="Ana"
+            autoFocus
+          />
         </Field>
         <Field label="Apellido">
-          <Input name="apellido" required minLength={1} maxLength={120} placeholder="Martini" />
+          <Input
+            name="apellido"
+            required
+            minLength={1}
+            maxLength={120}
+            autoComplete="family-name"
+            placeholder="Martini"
+          />
         </Field>
       </div>
 
       <Field label="DNI (sin puntos)">
-        <Input name="dni" required pattern="\d{7,9}" inputMode="numeric" placeholder="32145678" />
+        <Input
+          name="dni"
+          required
+          pattern="\d{7,9}"
+          inputMode="numeric"
+          autoComplete="off"
+          placeholder="32145678"
+        />
       </Field>
 
       <div className="grid gap-4 sm:grid-cols-2">
@@ -55,7 +84,7 @@ export function SignupForm() {
             name="sexoBiologico"
             required
             defaultValue=""
-            className="h-11 w-full rounded-md border border-white/10 bg-pulso-azul-medianoche/60 px-4 text-sm text-pulso-blanco-calido focus:border-pulso-turquesa focus:outline-none"
+            className="h-12 w-full rounded-md border border-white/10 bg-pulso-azul-medianoche/60 px-4 text-base text-pulso-blanco-calido focus:border-pulso-turquesa focus:outline-none focus:ring-2 focus:ring-pulso-turquesa/30"
           >
             <option value="" disabled>Seleccioná</option>
             <option value="MASCULINO">Masculino</option>
@@ -71,7 +100,7 @@ export function SignupForm() {
             name="provincia"
             required
             defaultValue=""
-            className="h-11 w-full rounded-md border border-white/10 bg-pulso-azul-medianoche/60 px-4 text-sm text-pulso-blanco-calido focus:border-pulso-turquesa focus:outline-none"
+            className="h-12 w-full rounded-md border border-white/10 bg-pulso-azul-medianoche/60 px-4 text-base text-pulso-blanco-calido focus:border-pulso-turquesa focus:outline-none focus:ring-2 focus:ring-pulso-turquesa/30"
           >
             <option value="" disabled>Seleccioná</option>
             {PROVINCIAS.map((p) => (
@@ -88,18 +117,30 @@ export function SignupForm() {
         <Input name="email" type="email" required autoComplete="email" placeholder="vos@example.com" />
       </Field>
 
-      <Field label="Contraseña (mín 12, mayúsc + minúsc + dígito)">
-        <Input
-          name="password"
-          type="password"
-          required
-          minLength={12}
-          autoComplete="new-password"
-        />
-      </Field>
+      <PasswordInput
+        name="password"
+        label="Contraseña"
+        required
+        minLength={8}
+        autoComplete="new-password"
+        value={password}
+        onChange={setPassword}
+        showStrength
+        hint="Mínimo 8 caracteres. Te recomendamos algo memorable como casa-azul-7."
+        rightSlot={
+          <button
+            type="button"
+            onClick={suggestPassword}
+            className="press inline-flex items-center gap-1 text-pulso-cobre transition-colors hover:text-pulso-cobre-deep"
+          >
+            <Sparkles size={12} className="icon-wobble" />
+            Sugerirme una fácil
+          </button>
+        }
+      />
 
       <Field label="Teléfono (opcional)">
-        <Input name="telefono" placeholder="+54 9 11 …" />
+        <Input name="telefono" type="tel" autoComplete="tel" placeholder="+54 9 11 …" />
       </Field>
 
       {error ? (

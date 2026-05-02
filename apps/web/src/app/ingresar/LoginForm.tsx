@@ -1,9 +1,11 @@
 'use client';
 
+import Link from 'next/link';
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button, Input } from '@pulso/ui';
 import { LogIn } from 'lucide-react';
+import { PasswordInput } from '@/components/PasswordInput';
 import { loginAction } from './actions';
 
 export function LoginForm() {
@@ -28,12 +30,27 @@ export function LoginForm() {
     <form action={handleSubmit} className="space-y-4">
       <label className="block">
         <span className="mb-1.5 block text-sm font-medium">Email</span>
-        <Input type="email" name="email" required autoComplete="email" placeholder="vos@pulso.demo" />
+        <Input
+          type="email"
+          name="email"
+          required
+          autoComplete="email"
+          placeholder="vos@pulso.demo"
+          autoFocus
+        />
       </label>
-      <label className="block">
-        <span className="mb-1.5 block text-sm font-medium">Contraseña</span>
-        <Input type="password" name="password" required autoComplete="current-password" />
-      </label>
+
+      <PasswordInput
+        name="password"
+        label="Contraseña"
+        required
+        autoComplete="current-password"
+        rightSlot={
+          <Link href="/recuperar-contrasena" className="text-pulso-turquesa hover:underline">
+            ¿Olvidaste tu contraseña?
+          </Link>
+        }
+      />
 
       {error ? (
         <div className="rounded-md border border-danger/30 bg-danger/10 p-3 text-sm text-danger">

@@ -3,10 +3,11 @@ import { scryptSync, timingSafeEqual } from 'node:crypto';
 
 const COST = 12;
 const SCRYPT_PREFIX = 'scrypt$';
+const MIN_PASSWORD_LENGTH = 8;
 
 export async function hashPassword(plain: string): Promise<string> {
-  if (plain.length < 12) {
-    throw new Error('La contraseña debe tener al menos 12 caracteres.');
+  if (plain.length < MIN_PASSWORD_LENGTH) {
+    throw new Error(`La contraseña debe tener al menos ${MIN_PASSWORD_LENGTH} caracteres.`);
   }
   return bcrypt.hash(plain, COST);
 }

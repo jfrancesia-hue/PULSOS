@@ -35,6 +35,18 @@ const REFRESH_TTL_DAYS = 14;
 const MAX_FAILED_LOGINS = 5;
 const LOCK_DURATION_MIN = 15;
 
+const INSTITUTIONAL_ROLES: ReadonlyArray<Role> = ['ADMIN', 'SUPERADMIN', 'PROFESIONAL', 'FARMACIA', 'INSTITUCION'];
+const STRONG_PASSWORD_RE = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{12,}$/;
+
+function ensureRoleAllowsPassword(role: Role, password: string): void {
+  if (!INSTITUTIONAL_ROLES.includes(role)) return;
+  if (!STRONG_PASSWORD_RE.test(password)) {
+    throw new BadRequestException(
+      'Las cuentas institucionales requieren contraseña de 12+ caracteres con mayúsculas, minúsculas y un dígito.',
+    );
+  }
+}
+
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger('Auth');
@@ -322,6 +334,11 @@ export class AuthService {
     if (!stored || stored.consumedAt || stored.expiresAt < new Date()) {
       throw new BadRequestException('Token inválido o expirado.');
     }
+    const owner = await this.prisma.client.user.findUnique({
+      where: { id: stored.userId },
+      select: { role: true },
+    });
+    if (owner) ensureRoleAllowsPassword(owner.role, newPassword);
     const passwordHash = await hashPassword(newPassword);
     await this.prisma.client.$transaction([
       this.prisma.client.passwordResetToken.update({
@@ -413,6 +430,7 @@ export class AuthService {
 
     const ok = await verifyPasswordHybrid(currentPassword, user.passwordHash);
     if (!ok) throw new UnauthorizedException('Contraseña actual incorrecta.');
+    ensureRoleAllowsPassword(user.role, newPassword);
 
     const passwordHash = await hashPassword(newPassword);
     await this.prisma.client.$transaction([
