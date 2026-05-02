@@ -220,7 +220,9 @@ export class AuthService {
       payload: {},
     });
 
-    return this.issueTokens(user.id, user.role, user.mfaEnabled, ctx);
+    // Llegamos acá tras (a) MFA verificado o (b) usuario sin MFA habilitado.
+    // En ambos casos la flag de "MFA satisfecho" del access token debe ser true.
+    return this.issueTokens(user.id, user.role, true, ctx);
   }
 
   async refresh(refreshToken: string, ctx: RequestContext) {
@@ -250,7 +252,8 @@ export class AuthService {
       data: { revokedAt: new Date() },
     });
 
-    return this.issueTokens(stored.user.id, stored.user.role, stored.user.mfaEnabled, ctx);
+    // El refresh sólo procede cuando ya hubo un login válido — propagamos mfaSatisfied=true.
+    return this.issueTokens(stored.user.id, stored.user.role, true, ctx);
   }
 
   async verifyEmail(token: string) {
