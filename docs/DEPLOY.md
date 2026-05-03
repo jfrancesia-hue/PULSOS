@@ -56,12 +56,14 @@ Stack de producción recomendado: **Render (api) + Vercel (web/admin) + Supabase
 2. Render lee `render.yaml` y crea:
    - `pulso-api` (web service)
    - `pulso-audit-verify` (cron diario para verificar hash chain)
-3. Completar las env vars marcadas como `sync: false` (DATABASE_URL, S3, SMTP, Twilio, etc.).
-4. Primera ejecución corre `pnpm db:migrate:deploy` automáticamente. **IMPORTANTE**: aplicar manualmente los triggers SQL append-only:
+3. Completar las env vars marcadas como `sync: false` (DATABASE_URL, DIRECT_URL, S3, SMTP, Twilio, etc.).
+4. Cada deploy corre `preDeployCommand` ANTES del cutover de tráfico:
    ```bash
-   # Desde Render Shell:
-   pnpm --filter @pulso/db triggers
+   pnpm --filter @pulso/db migrate:deploy && pnpm --filter @pulso/db triggers
    ```
+   - `migrate:deploy` aplica migrations versionadas en `packages/db/prisma/migrations/`.
+   - `triggers` aplica el SQL append-only de `AuditLog` (idempotente).
+   - Si cualquiera de los dos falla, Render mantiene la versión anterior. Deploy seguro.
 
 ## 6. Web pública · Vercel
 

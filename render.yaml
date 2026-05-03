@@ -6,6 +6,9 @@ services:
     plan: starter
     branch: main
     buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm --filter @pulso/db generate && pnpm --filter @pulso/api build
+    # preDeployCommand corre con DATABASE_URL/DIRECT_URL ya inyectadas, ANTES del cutover de tráfico.
+    # Si falla, Render mantiene la versión anterior (deploy seguro).
+    preDeployCommand: pnpm --filter @pulso/db migrate:deploy && pnpm --filter @pulso/db triggers
     startCommand: pnpm --filter @pulso/api start
     healthCheckPath: /api/health
     envVars:
